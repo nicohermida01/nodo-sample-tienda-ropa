@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Fill in from the SISTEMA VISUAL section of CLAUDE.md.
+ * Components consume tokens only (bg-bg, text-ink, etc.), never raw colors.
+ */
+@theme {
+}
