@@ -1,0 +1,76 @@
+{
+  "slug": "cardigan-lana-merino",
+  "name": "Cárdigan de Lana Merino",
+  "category": "buzos-y-abrigos",
+  "collection": "otono-sierra",
+  "price": 128000,
+  "compareAtPrice": 142000,
+  "colors": [
+    {
+      "name": "Avena",
+      "hex": "#D8CCB6"
+    },
+    {
+      "name": "Chocolate",
+      "hex": "#4A3426"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": false
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Lana merino",
+      "percent": 70
+    },
+    {
+      "material": "Poliamida",
+      "percent": 30
+    }
+  ],
+  "care": [
+    "Lavar a mano con agua fría y jabón neutro",
+    "Secar en plano, sin colgar",
+    "Guardar doblado"
+  ],
+  "description": "Punto medio de merino, liviano y cálido. Botones de madera y un largo que cubre la cadera.",
+  "isNew": false,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/cardigan-lana-merino/frente.jpg",
+      "alt": "Foto de ejemplo: Cárdigan de Lana Merino en color avena, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/cardigan-lana-merino/espalda.jpg",
+      "alt": "Foto de ejemplo: Cárdigan de Lana Merino en color avena, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/cardigan-lana-merino/detalle.jpg",
+      "alt": "Foto de ejemplo: Cárdigan de Lana Merino en color avena, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-04-19"
+}

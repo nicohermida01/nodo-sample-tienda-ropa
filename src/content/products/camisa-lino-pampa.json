@@ -1,0 +1,80 @@
+{
+  "slug": "camisa-lino-pampa",
+  "name": "Camisa de Lino Pampa",
+  "category": "camisas",
+  "collection": "otono-sierra",
+  "price": 78900,
+  "colors": [
+    {
+      "name": "Blanco roto",
+      "hex": "#F2EEE6"
+    },
+    {
+      "name": "Oliva",
+      "hex": "#6B6B47"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": false
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Lino",
+      "percent": 55
+    },
+    {
+      "material": "Algodón",
+      "percent": 45
+    }
+  ],
+  "care": [
+    "Lavar a mano con agua fría",
+    "Secar colgada",
+    "Planchar con vapor, todavía húmeda"
+  ],
+  "description": "Lino y algodón en partes casi iguales: fresca al mediodía, abrigada al atardecer. Cuello italiano y botones de corozo.",
+  "isNew": true,
+  "featured": true,
+  "images": [
+    {
+      "src": "../../assets/products/camisa-lino-pampa/frente.jpg",
+      "alt": "Foto de ejemplo: Camisa de Lino Pampa en color blanco roto, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/camisa-lino-pampa/espalda.jpg",
+      "alt": "Foto de ejemplo: Camisa de Lino Pampa en color blanco roto, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/camisa-lino-pampa/detalle.jpg",
+      "alt": "Foto de ejemplo: Camisa de Lino Pampa en color blanco roto, detalle de la tela.",
+      "view": "detalle"
+    },
+    {
+      "src": "../../assets/products/camisa-lino-pampa/look.jpg",
+      "alt": "Foto de ejemplo: Camisa de Lino Pampa en color blanco roto, look completo.",
+      "view": "look"
+    }
+  ],
+  "publishedAt": "2026-03-15"
+}

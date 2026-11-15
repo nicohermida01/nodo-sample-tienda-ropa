@@ -1,0 +1,75 @@
+{
+  "slug": "remera-pima-esencial",
+  "name": "Remera Pima Esencial",
+  "category": "remeras",
+  "collection": "basicos",
+  "price": 38900,
+  "colors": [
+    {
+      "name": "Crudo",
+      "hex": "#EDE6DA"
+    },
+    {
+      "name": "Negro",
+      "hex": "#1C1B19"
+    },
+    {
+      "name": "Arena",
+      "hex": "#CBB89A"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": false
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón pima",
+      "percent": 100
+    }
+  ],
+  "care": [
+    "Lavar a mano o en lavarropas con agua fría",
+    "No usar secarropas",
+    "Planchar a temperatura baja del revés"
+  ],
+  "description": "La remera que vas a usar todas las semanas. Algodón pima peinado, cuello redondo que no se deforma y una caída suave que mejora con cada lavado.",
+  "isNew": false,
+  "featured": true,
+  "images": [
+    {
+      "src": "../../assets/products/remera-pima-esencial/frente.jpg",
+      "alt": "Foto de ejemplo: Remera Pima Esencial en color crudo, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/remera-pima-esencial/espalda.jpg",
+      "alt": "Foto de ejemplo: Remera Pima Esencial en color crudo, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/remera-pima-esencial/detalle.jpg",
+      "alt": "Foto de ejemplo: Remera Pima Esencial en color crudo, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-03-01"
+}

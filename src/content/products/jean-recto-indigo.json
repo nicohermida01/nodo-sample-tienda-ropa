@@ -1,0 +1,71 @@
+{
+  "slug": "jean-recto-indigo",
+  "name": "Jean Recto Índigo",
+  "category": "pantalones",
+  "collection": "basicos",
+  "price": 84900,
+  "colors": [
+    {
+      "name": "Índigo",
+      "hex": "#2F3A55"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": false
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón",
+      "percent": 99
+    },
+    {
+      "material": "Elastano",
+      "percent": 1
+    }
+  ],
+  "care": [
+    "Lavar del revés con agua fría",
+    "Lavar poco: el índigo lo agradece",
+    "Secar a la sombra"
+  ],
+  "description": "Denim rígido de 13 oz con calce recto y tiro medio. Va a ablandarse y tomar tu forma con el uso.",
+  "isNew": false,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/jean-recto-indigo/frente.jpg",
+      "alt": "Foto de ejemplo: Jean Recto Índigo en color índigo, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/jean-recto-indigo/espalda.jpg",
+      "alt": "Foto de ejemplo: Jean Recto Índigo en color índigo, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/jean-recto-indigo/detalle.jpg",
+      "alt": "Foto de ejemplo: Jean Recto Índigo en color índigo, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-04-05"
+}

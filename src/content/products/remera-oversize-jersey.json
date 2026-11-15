@@ -1,0 +1,67 @@
+{
+  "slug": "remera-oversize-jersey",
+  "name": "Remera Oversize Jersey Pesado",
+  "category": "remeras",
+  "collection": "otono-sierra",
+  "price": 42500,
+  "compareAtPrice": 49900,
+  "colors": [
+    {
+      "name": "Tierra",
+      "hex": "#8A5A3C"
+    },
+    {
+      "name": "Gris piedra",
+      "hex": "#8E8B84"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": false
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón",
+      "percent": 100
+    }
+  ],
+  "care": [
+    "Lavar en lavarropas con agua fría",
+    "Secar a la sombra",
+    "No usar lavandina"
+  ],
+  "description": "Jersey de 240 g con hombro caído y largo justo. Estructura de remera de abrigo para llevar sola o debajo de una camisa abierta.",
+  "isNew": true,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/remera-oversize-jersey/frente.jpg",
+      "alt": "Foto de ejemplo: Remera Oversize Jersey Pesado en color tierra, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/remera-oversize-jersey/espalda.jpg",
+      "alt": "Foto de ejemplo: Remera Oversize Jersey Pesado en color tierra, vista de espalda.",
+      "view": "espalda"
+    }
+  ],
+  "publishedAt": "2026-03-08"
+}

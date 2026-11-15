@@ -1,0 +1,16 @@
+{
+  "slug": "otono-sierra",
+  "name": "Otoño Sierra",
+  "status": "current",
+  "order": 1,
+  "tagline": "Capas, texturas y colores de tierra para los días que arrancan frescos.",
+  "description": "Una colección pensada entre las sierras y la ciudad: lanas, linos y paños en tonos de piedra, musgo y terracota, con cortes amplios que se superponen sin esfuerzo.",
+  "cover": {
+    "src": "../../assets/campaign/otono-sierra-cover.jpg",
+    "alt": "Foto de ejemplo: portada de la colección Otoño Sierra."
+  },
+  "hero": {
+    "src": "../../assets/campaign/otono-sierra-hero.jpg",
+    "alt": "Foto de ejemplo: campaña Otoño Sierra a pantalla completa."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "slug": "vestido-camisero-algodon",
+  "name": "Vestido Camisero de Algodón",
+  "category": "vestidos",
+  "collection": "basicos",
+  "price": 98500,
+  "compareAtPrice": 109000,
+  "colors": [
+    {
+      "name": "Crudo",
+      "hex": "#EDE6DA"
+    },
+    {
+      "name": "Azul noche",
+      "hex": "#1F2838"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": false
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón",
+      "percent": 100
+    }
+  ],
+  "care": [
+    "Lavar en lavarropas con agua fría",
+    "Secar a la sombra",
+    "Planchar a temperatura media"
+  ],
+  "description": "Popelín de algodón, botonera completa y bolsillos laterales. Abierto es un abrigo liviano; cerrado, un vestido de todos los días.",
+  "isNew": false,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/vestido-camisero-algodon/frente.jpg",
+      "alt": "Foto de ejemplo: Vestido Camisero de Algodón en color crudo, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/vestido-camisero-algodon/espalda.jpg",
+      "alt": "Foto de ejemplo: Vestido Camisero de Algodón en color crudo, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/vestido-camisero-algodon/detalle.jpg",
+      "alt": "Foto de ejemplo: Vestido Camisero de Algodón en color crudo, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-05-10"
+}

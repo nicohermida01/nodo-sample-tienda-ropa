@@ -1,0 +1,79 @@
+{
+  "slug": "pantalon-sastrero-wide",
+  "name": "Pantalón Sastrero Wide Leg",
+  "category": "pantalones",
+  "collection": "otono-sierra",
+  "price": 92500,
+  "colors": [
+    {
+      "name": "Carbón",
+      "hex": "#2E2D2B"
+    },
+    {
+      "name": "Camel",
+      "hex": "#A9825A"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": false
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Lana",
+      "percent": 30
+    },
+    {
+      "material": "Poliéster reciclado",
+      "percent": 68
+    },
+    {
+      "material": "Elastano",
+      "percent": 2
+    }
+  ],
+  "care": [
+    "Lavar a mano con agua fría",
+    "Secar en plano",
+    "Planchar con paño húmedo"
+  ],
+  "description": "Tiro alto, pinzas al frente y una pierna amplia que cae recta. Se arma con zapatillas o con mocasines sin cambiar de actitud.",
+  "isNew": true,
+  "featured": true,
+  "images": [
+    {
+      "src": "../../assets/products/pantalon-sastrero-wide/frente.jpg",
+      "alt": "Foto de ejemplo: Pantalón Sastrero Wide Leg en color carbón, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/pantalon-sastrero-wide/espalda.jpg",
+      "alt": "Foto de ejemplo: Pantalón Sastrero Wide Leg en color carbón, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/pantalon-sastrero-wide/look.jpg",
+      "alt": "Foto de ejemplo: Pantalón Sastrero Wide Leg en color carbón, look completo.",
+      "view": "look"
+    }
+  ],
+  "publishedAt": "2026-03-29"
+}

@@ -1,0 +1,80 @@
+{
+  "slug": "sobretodo-pano-calamuchita",
+  "name": "Sobretodo de Paño Calamuchita",
+  "category": "buzos-y-abrigos",
+  "collection": "otono-sierra",
+  "price": 214000,
+  "colors": [
+    {
+      "name": "Negro",
+      "hex": "#1C1B19"
+    },
+    {
+      "name": "Gris topo",
+      "hex": "#6E655C"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": false
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Lana",
+      "percent": 60
+    },
+    {
+      "material": "Poliéster",
+      "percent": 40
+    }
+  ],
+  "care": [
+    "Solo limpieza en seco",
+    "Cepillar después de usar",
+    "Guardar en percha ancha"
+  ],
+  "description": "Paño de lana con forro completo, solapa amplia y largo por debajo de la rodilla. La prenda que define el invierno.",
+  "isNew": true,
+  "featured": true,
+  "images": [
+    {
+      "src": "../../assets/products/sobretodo-pano-calamuchita/frente.jpg",
+      "alt": "Foto de ejemplo: Sobretodo de Paño Calamuchita en color negro, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/sobretodo-pano-calamuchita/espalda.jpg",
+      "alt": "Foto de ejemplo: Sobretodo de Paño Calamuchita en color negro, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/sobretodo-pano-calamuchita/detalle.jpg",
+      "alt": "Foto de ejemplo: Sobretodo de Paño Calamuchita en color negro, detalle de la tela.",
+      "view": "detalle"
+    },
+    {
+      "src": "../../assets/products/sobretodo-pano-calamuchita/look.jpg",
+      "alt": "Foto de ejemplo: Sobretodo de Paño Calamuchita en color negro, look completo.",
+      "view": "look"
+    }
+  ],
+  "publishedAt": "2026-04-26"
+}

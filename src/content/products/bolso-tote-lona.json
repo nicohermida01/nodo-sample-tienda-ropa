@@ -1,0 +1,50 @@
+{
+  "slug": "bolso-tote-lona",
+  "name": "Bolso Tote de Lona",
+  "category": "accesorios",
+  "collection": "basicos",
+  "price": 34900,
+  "colors": [
+    {
+      "name": "Natural",
+      "hex": "#D9CDB4"
+    },
+    {
+      "name": "Negro",
+      "hex": "#1C1B19"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "U",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón (lona 12 oz)",
+      "percent": 100
+    }
+  ],
+  "care": [
+    "Limpiar con paño húmedo",
+    "Lavar a mano si hace falta",
+    "Secar a la sombra"
+  ],
+  "description": "Lona gruesa con fondo reforzado, bolsillo interno con cierre y manijas largas para llevar al hombro. Entra la notebook y el día entero.",
+  "isNew": false,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/bolso-tote-lona/frente.jpg",
+      "alt": "Foto de ejemplo: Bolso Tote de Lona en color natural, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/bolso-tote-lona/detalle.jpg",
+      "alt": "Foto de ejemplo: Bolso Tote de Lona en color natural, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-05-17"
+}

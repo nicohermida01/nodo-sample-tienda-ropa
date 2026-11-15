@@ -1,0 +1,71 @@
+{
+  "slug": "camisa-oxford-clasica",
+  "name": "Camisa Oxford Clásica",
+  "category": "camisas",
+  "collection": "basicos",
+  "price": 69900,
+  "colors": [
+    {
+      "name": "Celeste",
+      "hex": "#B9C8D6"
+    },
+    {
+      "name": "Blanco",
+      "hex": "#F7F6F2"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": false
+    },
+    {
+      "label": "XL",
+      "inStock": true
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón",
+      "percent": 100
+    }
+  ],
+  "care": [
+    "Lavar en lavarropas a 30 °C",
+    "Planchar a temperatura media",
+    "No usar secarropas"
+  ],
+  "description": "Tejido oxford de trama visible, cuello con botones y bolsillo al pecho. Una base que funciona con todo lo demás del placard.",
+  "isNew": false,
+  "featured": false,
+  "images": [
+    {
+      "src": "../../assets/products/camisa-oxford-clasica/frente.jpg",
+      "alt": "Foto de ejemplo: Camisa Oxford Clásica en color celeste, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/camisa-oxford-clasica/espalda.jpg",
+      "alt": "Foto de ejemplo: Camisa Oxford Clásica en color celeste, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/camisa-oxford-clasica/detalle.jpg",
+      "alt": "Foto de ejemplo: Camisa Oxford Clásica en color celeste, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-03-22"
+}

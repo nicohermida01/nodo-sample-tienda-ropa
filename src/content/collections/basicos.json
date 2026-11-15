@@ -1,0 +1,12 @@
+{
+  "slug": "basicos",
+  "name": "Básicos",
+  "status": "permanent",
+  "order": 2,
+  "tagline": "Lo que usás todas las semanas, hecho para durar años.",
+  "description": "Prendas de todos los días con buenos materiales y cortes que no pasan de moda. Siempre disponibles, siempre en los mismos colores.",
+  "cover": {
+    "src": "../../assets/campaign/basicos-cover.jpg",
+    "alt": "Foto de ejemplo: portada de la colección Básicos."
+  }
+}

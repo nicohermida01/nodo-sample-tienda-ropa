@@ -1,0 +1,75 @@
+{
+  "slug": "buzo-frisa-sierra",
+  "name": "Buzo de Frisa Sierra",
+  "category": "buzos-y-abrigos",
+  "collection": "otono-sierra",
+  "price": 96900,
+  "colors": [
+    {
+      "name": "Gris melange",
+      "hex": "#A3A19C"
+    },
+    {
+      "name": "Musgo",
+      "hex": "#4F5340"
+    }
+  ],
+  "sizes": [
+    {
+      "label": "XS",
+      "inStock": true
+    },
+    {
+      "label": "S",
+      "inStock": true
+    },
+    {
+      "label": "M",
+      "inStock": true
+    },
+    {
+      "label": "L",
+      "inStock": true
+    },
+    {
+      "label": "XL",
+      "inStock": false
+    }
+  ],
+  "composition": [
+    {
+      "material": "Algodón",
+      "percent": 80
+    },
+    {
+      "material": "Poliéster",
+      "percent": 20
+    }
+  ],
+  "care": [
+    "Lavar del revés con agua fría",
+    "No usar secarropas",
+    "No planchar sobre el bordado"
+  ],
+  "description": "Frisa invisible de 380 g, puños y cintura en rib grueso y un bordado tono sobre tono en la espalda. Abriga en serio.",
+  "isNew": true,
+  "featured": true,
+  "images": [
+    {
+      "src": "../../assets/products/buzo-frisa-sierra/frente.jpg",
+      "alt": "Foto de ejemplo: Buzo de Frisa Sierra en color gris melange, vista de frente.",
+      "view": "frente"
+    },
+    {
+      "src": "../../assets/products/buzo-frisa-sierra/espalda.jpg",
+      "alt": "Foto de ejemplo: Buzo de Frisa Sierra en color gris melange, vista de espalda.",
+      "view": "espalda"
+    },
+    {
+      "src": "../../assets/products/buzo-frisa-sierra/detalle.jpg",
+      "alt": "Foto de ejemplo: Buzo de Frisa Sierra en color gris melange, detalle de la tela.",
+      "view": "detalle"
+    }
+  ],
+  "publishedAt": "2026-04-12"
+}
