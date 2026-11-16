@@ -26,3 +26,6 @@ pnpm-debug.log*
 # environment variables (all variants)
 .env*
 !.env.example
+
+# impeccable runtime cache
+.impeccable/hook.cache.json
