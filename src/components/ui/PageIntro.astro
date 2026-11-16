@@ -1,0 +1,25 @@
+---
+import Breadcrumb from './Breadcrumb.astro';
+import type { NavItem } from '../../config/site';
+
+interface Props {
+  title: string;
+  lead?: string;
+  breadcrumb: NavItem[];
+  align?: 'center' | 'start';
+}
+
+const { title, lead, breadcrumb, align = 'center' } = Astro.props;
+---
+
+<div class:list={['shell pt-8 pb-8 lg:pt-12 lg:pb-12', align === 'center' && 'text-center']}>
+  <Breadcrumb items={breadcrumb} class:list={[align === 'center' && 'flex justify-center']} />
+  <h1 class="mt-6 text-[1.75rem] leading-tight font-semibold tracking-[-0.02em] lg:text-[2.5rem]">
+    {title}
+  </h1>
+  {
+    lead && (
+      <p class:list={['mt-3 max-w-[60ch] text-ink-muted', align === 'center' && 'mx-auto']}>{lead}</p>
+    )
+  }
+</div>

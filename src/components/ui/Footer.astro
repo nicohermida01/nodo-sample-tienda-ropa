@@ -1,0 +1,102 @@
+---
+import { site } from '../../config/site';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-line bg-bg">
+  <div class="shell grid gap-12 pt-16 pb-10 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:gap-10 lg:pt-20">
+    <div class="max-w-sm">
+      <p class="text-[1.125rem] font-bold tracking-[0.24em]">{site.brand.shortName}</p>
+      <p class="mt-3 text-ink-muted">{site.brand.tagline}</p>
+      <ul class="mt-6 space-y-1 text-[0.875rem]">
+        <li>
+          <a href={site.social.instagram.url} rel="noopener" class="footer-link">
+            <Icon name="instagram" size={18} />
+            <span class="link-quiet">{site.social.instagram.handle}</span>
+          </a>
+        </li>
+        <li>
+          <a href={`https://wa.me/${site.contact.whatsapp.e164}`} rel="noopener" class="footer-link">
+            <Icon name="whatsapp" size={18} />
+            <span class="link-quiet">{site.contact.whatsapp.display}</span>
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.contact.email}`} class="footer-link">
+            <Icon name="mail" size={18} />
+            <span class="link-quiet">{site.contact.email}</span>
+          </a>
+        </li>
+        <li>
+          <a href="/contacto" class="footer-link">
+            <Icon name="pin" size={18} />
+            <span class="link-quiet">
+              Showroom: {site.showroom.address}, {site.showroom.city}
+              {site.showroom.byAppointment && ' (con cita previa)'}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {
+      site.nav.footer.map((group) => (
+        <nav aria-label={group.title}>
+          <h2 class="label">{group.title}</h2>
+          <ul class="mt-4 space-y-0.5 text-[0.875rem]">
+            {group.links.map((link) => (
+              <li>
+                <a href={link.href} class="inline-flex min-h-11 items-center">
+                  <span class="link-quiet">{link.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
+  </div>
+
+  <div class="shell">
+    <div class="flex flex-col gap-4 border-t border-line py-6 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8125rem]">
+        <a href={site.legal.withdrawalHref} class="btn btn-secondary min-h-11 px-4 py-2 text-[0.75rem]">
+          Botón de arrepentimiento
+        </a>
+        <a href={site.legal.termsHref} class="inline-flex min-h-11 items-center">
+          <span class="link-quiet">Términos y condiciones</span>
+        </a>
+        <a
+          href={site.legal.consumerDefenseUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-11 items-center"
+        >
+          <span class="link-quiet">Defensa de las y los Consumidores</span>
+          <span class="sr-only"> (se abre en una pestaña nueva)</span>
+        </a>
+      </div>
+      <p class="text-[0.8125rem] text-ink-muted">
+        © {year} {site.brand.name}. Precios finales en pesos argentinos con IVA incluido.
+      </p>
+    </div>
+    {
+      site.demoNotice.enabled && (
+        <p class="border-t border-line py-4 text-[0.8125rem] text-ink-muted">
+          {site.demoNotice.text}
+        </p>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+  }
+</style>

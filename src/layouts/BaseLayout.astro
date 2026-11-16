@@ -1,0 +1,128 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '../styles/global.css';
+import { site } from '../config/site';
+import AnnouncementBar from '../components/ui/AnnouncementBar.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import CartDrawer from '../components/cart/CartDrawer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute URL of the Open Graph image. */
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'product';
+  /** Header laid transparent over a full-bleed campaign photo. */
+  overlayHeader?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = site.brand.description,
+  image,
+  imageAlt,
+  type = 'website',
+  overlayHeader = false,
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${site.brand.name}` : `${site.brand.name} | ${site.brand.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.brand.name,
+  url: site.url,
+  description: site.brand.description,
+  email: site.contact.email,
+  sameAs: [site.social.instagram.url],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.showroom.address,
+    addressLocality: site.showroom.city,
+    addressCountry: 'AR',
+  },
+};
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:site_name" content={site.brand.name} />
+    <meta property="og:locale" content={site.locale.replace('-', '_')} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {image && <meta property="og:image" content={image} />}
+    {image && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+
+    {
+      [organization, ...jsonLd].map((data) => (
+        <script type="application/ld+json" set:html={JSON.stringify(data)} />
+      ))
+    }
+
+    <ClientRouter />
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <AnnouncementBar />
+    <Header overlay={overlayHeader} />
+    <main id="contenido" tabindex="-1" class="flex-1 outline-none">
+      <slot />
+    </main>
+    <Footer />
+    <CartDrawer />
+
+    <script>
+      import '../lib/client/global';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    z-index: 100;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+    font-weight: 600;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+
+  html:has(dialog[open]),
+  html:has(.filters[data-open]) {
+    overflow: hidden;
+  }
+</style>

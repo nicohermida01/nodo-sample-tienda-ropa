@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import { site } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  lead?: string;
+}
+
+const { title, description, lead } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<BaseLayout title={title} description={description}>
+  <PageIntro
+    title={title}
+    lead={lead}
+    align="start"
+    breadcrumb={[
+      { label: 'Inicio', href: '/' },
+      { label: title, href: path },
+    ]}
+  />
+  <div class="shell pb-20 lg:pb-28">
+    <div class="prose-read">
+      <slot />
+      {
+        site.demoNotice.enabled && (
+          <p class="mt-12 border-t border-line pt-6 text-[0.8125rem] text-ink-muted">
+            {site.demoNotice.text} Los textos de esta página son un modelo para adaptar a cada marca.
+          </p>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>

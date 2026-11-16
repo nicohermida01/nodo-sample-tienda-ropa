@@ -1,0 +1,94 @@
+---
+import { site } from '../../config/site';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+const help = site.nav.footer.find((g) => g.title === 'Ayuda')?.links ?? [];
+---
+
+<dialog id="mobile-menu" class="overlay mobile-menu" aria-label="Menú" data-page-dialog>
+  <div class="flex h-full flex-col">
+    <div class="shell flex h-16 shrink-0 items-center justify-between">
+      <Wordmark />
+      <button type="button" class="close-btn" data-close-dialog>
+        <Icon name="x" size={22} />
+        <span class="sr-only">Cerrar menú</span>
+      </button>
+    </div>
+    <nav aria-label="Menú principal" class="shell flex-1 overflow-y-auto pb-10">
+      <ul class="border-t border-line">
+        {
+          site.nav.main.map((item) => (
+            <li class="border-b border-line">
+              <a href={item.href} class="menu-link">
+                {item.label}
+                <Icon name="chevron-right" size={20} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="label mt-10 text-ink-muted">Ayuda</p>
+      <ul class="mt-2">
+        {
+          help.map((item) => (
+            <li>
+              <a href={item.href} class="flex min-h-11 items-center">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 flex flex-col gap-1 text-ink-muted">
+        <a href={site.social.instagram.url} class="flex min-h-11 items-center gap-2" rel="noopener">
+          <Icon name="instagram" size={18} />
+          {site.social.instagram.handle}
+        </a>
+        <a href={`mailto:${site.contact.email}`} class="flex min-h-11 items-center gap-2">
+          <Icon name="mail" size={18} />
+          {site.contact.email}
+        </a>
+      </div>
+    </nav>
+  </div>
+</dialog>
+
+<style>
+  .mobile-menu {
+    width: 100%;
+    height: 100dvh;
+    inset: 0;
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.75rem;
+    font-size: 1.375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .close-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-right: -0.75rem;
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-menu[open] {
+      animation: menu-in 450ms var(--ease-out-expo);
+    }
+    @keyframes menu-in {
+      from {
+        opacity: 0;
+        transform: translateX(-24px);
+      }
+    }
+  }
+</style>

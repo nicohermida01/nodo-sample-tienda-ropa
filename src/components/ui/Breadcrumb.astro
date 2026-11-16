@@ -1,0 +1,36 @@
+---
+import type { NavItem } from '../../config/site';
+
+interface Props {
+  items: NavItem[];
+  class?: string;
+}
+
+const { items, class: className } = Astro.props;
+---
+
+<nav aria-label="Ruta de navegación" class:list={['text-[0.75rem] text-ink-muted', className]}>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+    {
+      items.map((item, i) => {
+        const last = i === items.length - 1;
+        return (
+          <li class="flex items-center gap-2">
+            {last ? (
+              <span aria-current="page" class="text-ink">
+                {item.label}
+              </span>
+            ) : (
+              <>
+                <a href={item.href} class="link-quiet inline-flex min-h-6 items-center">
+                  {item.label}
+                </a>
+                <span aria-hidden="true">/</span>
+              </>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
