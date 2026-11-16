@@ -1,0 +1,95 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site, formatPrice } from '../config/site';
+
+const { commerce, showroom } = site;
+const faqs = [
+  {
+    q: '¿Cuánto tarda en llegar mi pedido?',
+    a: 'Lo preparamos en 24 a 48 horas hábiles y el correo tarda entre 3 y 7 días hábiles según tu localidad.',
+  },
+  {
+    q: '¿Cuándo es gratis el envío?',
+    a: `En compras desde ${formatPrice(commerce.freeShippingThreshold)}, a todo el país. Retirar en el showroom tampoco tiene costo.`,
+  },
+  {
+    q: '¿Qué medios de pago aceptan?',
+    a: `Tarjetas de crédito en ${commerce.installments.count} cuotas${commerce.installments.interestFree ? ' sin interés' : ''}, tarjetas de débito y transferencia bancaria con ${Math.round(commerce.transferDiscount * 100)}% de descuento.`,
+  },
+  {
+    q: '¿Cómo sé qué talle elegir?',
+    a: 'Cada ficha tiene la guía de talles con medidas de referencia. Si estás entre dos talles, escribinos y te asesoramos.',
+  },
+  {
+    q: '¿Puedo cambiar una prenda?',
+    a: `Sí, dentro de los ${commerce.returnWindowDays} días, sin uso y con etiqueta. El primer cambio no tiene costo.`,
+  },
+  {
+    q: '¿Puedo ver las prendas antes de comprar?',
+    a: `Sí, en el showroom de ${showroom.address}, ${showroom.city}. ${showroom.note}`,
+  },
+  {
+    q: '¿Reponen los talles agotados?',
+    a: 'Producimos en tiradas cortas. Si un talle está agotado, suscribite al newsletter y te avisamos cuando vuelva.',
+  },
+  {
+    q: '¿Los precios incluyen impuestos?',
+    a: 'Sí, todos los precios son finales con IVA incluido. En cada ficha también ves el precio sin impuestos nacionales.',
+  },
+];
+---
+
+<InfoLayout
+  title="Preguntas frecuentes"
+  description="Respuestas sobre envíos, pagos, talles y cambios en TRAMA Estudio."
+  lead="Lo que más nos preguntan. Si no encontrás tu respuesta, escribinos."
+>
+  <div class="not-prose border-t border-line">
+    {
+      faqs.map((f) => (
+        <details class="faq">
+          <summary>
+            {f.q}
+            <Icon name="plus" size={18} class="shrink-0" />
+          </summary>
+          <p class="pb-5 text-ink-muted">{f.a}</p>
+        </details>
+      ))
+    }
+  </div>
+  <p class="mt-8">
+    ¿Otra duda? Escribinos a <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> o pasá por{' '}
+    <a href="/contacto">contacto</a>.
+  </p>
+</InfoLayout>
+
+<style>
+  .faq {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.75rem;
+    padding-block: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq summary :global(svg) {
+    transition: transform 300ms var(--ease-out-expo);
+  }
+
+  .faq[open] summary :global(svg) {
+    transform: rotate(45deg);
+  }
+</style>

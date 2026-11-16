@@ -1,0 +1,35 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import { site } from '../config/site';
+
+const { brand, contact } = site;
+---
+
+<InfoLayout
+  title="Política de privacidad"
+  description={`Cómo trata tus datos personales ${brand.name}.`}
+  lead="Pedimos solo los datos necesarios para entregarte tu compra, y nunca los vendemos."
+>
+  <h2>Qué datos usamos</h2>
+  <ul>
+    <li>Nombre, email, teléfono y dirección, para procesar y enviar tu pedido.</li>
+    <li>Tu email, si te suscribís al newsletter, para avisarte de colecciones y reposiciones.</li>
+    <li>El contenido de tu carrito, que queda guardado solo en tu navegador.</li>
+  </ul>
+
+  <h2>En esta demostración</h2>
+  <p>
+    Esta tienda es una demo: los formularios no envían ni guardan ningún dato. El carrito se guarda
+    únicamente en el almacenamiento local de tu navegador y podés vaciarlo cuando quieras.
+  </p>
+
+  <h2>Tus derechos</h2>
+  <p>
+    Podés pedir acceso, rectificación o eliminación de tus datos escribiendo a{' '}
+    <a href={`mailto:${contact.email}`}>{contact.email}</a>, conforme a la Ley 25.326 de Protección de
+    Datos Personales. La Agencia de Acceso a la Información Pública es el órgano de control de esa ley.
+  </p>
+
+  <h2>Cookies</h2>
+  <p>No usamos cookies de publicidad ni de seguimiento de terceros.</p>
+</InfoLayout>

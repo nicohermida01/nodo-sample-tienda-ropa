@@ -1,0 +1,39 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import { site } from '../config/site';
+
+const days = site.commerce.returnWindowDays;
+---
+
+<InfoLayout
+  title="Cambios y devoluciones"
+  description={`Tenés ${days} días para cambiar o devolver tu compra en TRAMA Estudio.`}
+  lead={`Tenés ${days} días desde que recibís tu pedido para cambiarlo o devolverlo. El primer cambio no tiene costo.`}
+>
+  <h2>Condiciones</h2>
+  <ul>
+    <li>La prenda tiene que estar sin uso, sin lavar y con su etiqueta.</li>
+    <li>Guardá el comprobante de compra o el número de pedido.</li>
+    <li>Las prendas en oferta también se pueden cambiar.</li>
+  </ul>
+
+  <h2>Cómo hacer un cambio</h2>
+  <ol>
+    <li>Escribinos a <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> con tu número de pedido y el talle o color que querés.</li>
+    <li>Te mandamos una etiqueta de envío sin costo para el primer cambio.</li>
+    <li>Cuando recibimos la prenda, despachamos la nueva en 48 horas hábiles.</li>
+  </ol>
+  <p>También podés hacer el cambio en el showroom, con cita previa.</p>
+
+  <h2>Devoluciones</h2>
+  <p>
+    Si preferís devolver la compra, te reintegramos el dinero por el mismo medio de pago dentro de los
+    10 días hábiles de recibida la prenda.
+  </p>
+
+  <h2>Botón de arrepentimiento</h2>
+  <p>
+    Si compraste online, podés revocar la compra dentro de los 10 días corridos desde la entrega, sin
+    dar explicaciones. Hacelo desde el <a href={site.legal.withdrawalHref}>botón de arrepentimiento</a>.
+  </p>
+</InfoLayout>

@@ -1,0 +1,32 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import SizeTable from '../components/product/SizeTable.astro';
+import { site } from '../config/site';
+---
+
+<InfoLayout
+  title="Guía de talles"
+  description="Tabla de medidas de referencia y cómo medirte para elegir tu talle en TRAMA Estudio."
+  lead="Nuestros cortes son amplios y pensados para superponerse. Si tenés dudas entre dos talles, escribinos y te ayudamos."
+>
+  <h2>Medidas de referencia</h2>
+  <SizeTable caption="Medidas corporales de referencia (cm)" />
+
+  <h2>Cómo medirte</h2>
+  <ul>
+    <li><strong>Pecho:</strong> pasá el centímetro por la parte más ancha del pecho, debajo de las axilas.</li>
+    <li><strong>Cintura:</strong> medí a la altura del ombligo, sin ajustar.</li>
+    <li><strong>Cadera:</strong> medí la parte más ancha, con los pies juntos.</li>
+    <li><strong>Largo de tiro:</strong> desde la entrepierna hasta el tobillo, por la parte interna.</li>
+  </ul>
+  <p>
+    Medite sobre ropa interior o una remera fina, con el centímetro firme pero sin apretar. Los
+    accesorios son de talle único.
+  </p>
+
+  <h2>¿Te quedó grande o chico?</h2>
+  <p>
+    Lo cambiás sin costo dentro de los {site.commerce.returnWindowDays} días. Mirá cómo en{' '}
+    <a href="/cambios-y-devoluciones">cambios y devoluciones</a>.
+  </p>
+</InfoLayout>

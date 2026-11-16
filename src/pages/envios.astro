@@ -1,0 +1,38 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import { site, formatPrice } from '../config/site';
+
+const { commerce, showroom } = site;
+---
+
+<InfoLayout
+  title="Envíos"
+  description="Costos, plazos y formas de entrega de TRAMA Estudio."
+  lead={`Enviamos a todo el país. En compras desde ${formatPrice(commerce.freeShippingThreshold)} el envío es gratis.`}
+>
+  <h2>Plazos</h2>
+  <p>
+    Preparamos tu pedido en 24 a 48 horas hábiles desde que se acredita el pago. Después, el correo
+    tarda entre 3 y 7 días hábiles según tu localidad. Te mandamos el número de seguimiento por email
+    apenas sale del estudio.
+  </p>
+
+  <h2>Costos</h2>
+  <ul>
+    <li>Compras desde {formatPrice(commerce.freeShippingThreshold)}: envío gratis a todo el país.</li>
+    <li>Compras menores: el costo se calcula con tu código postal antes de pagar.</li>
+    <li>Retiro en el showroom: sin costo.</li>
+  </ul>
+
+  <h2>Retiro en el showroom</h2>
+  <p>
+    Podés retirar tu compra en {showroom.address}, {showroom.city}. {showroom.note}
+  </p>
+
+  <h2>Si algo sale mal</h2>
+  <p>
+    Si el paquete llega dañado o no llega en el plazo indicado, escribinos a{' '}
+    <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> o por{' '}
+    <a href={`https://wa.me/${site.contact.whatsapp.e164}`} rel="noopener">WhatsApp</a> y lo resolvemos.
+  </p>
+</InfoLayout>

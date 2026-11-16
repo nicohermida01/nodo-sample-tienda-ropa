@@ -1,0 +1,57 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import { site, formatPrice } from '../config/site';
+
+const { brand, commerce, contact, legal } = site;
+---
+
+<InfoLayout
+  title="Términos y condiciones"
+  description={`Condiciones de uso y de compra de ${brand.name}.`}
+  lead="Las reglas de juego para comprar en esta tienda, escritas lo más claro posible."
+>
+  <h2>1. Quiénes somos</h2>
+  <p>
+    {brand.name} es una marca de indumentaria de {brand.city}, {brand.country}. Podés escribirnos a{' '}
+    <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+  </p>
+
+  <h2>2. Precios</h2>
+  <p>
+    Todos los precios están expresados en pesos argentinos y son finales, con IVA incluido. En cada
+    ficha informamos además el precio sin impuestos nacionales, según el Régimen de Transparencia
+    Fiscal al Consumidor (Ley 27.743). Los precios pueden cambiar sin aviso, pero respetamos el precio
+    vigente al momento de tu compra.
+  </p>
+
+  <h2>3. Medios de pago</h2>
+  <p>
+    Aceptamos tarjetas de crédito en hasta {commerce.installments.count} cuotas{commerce.installments.interestFree ? ' sin interés' : ''},
+    tarjetas de débito y transferencia bancaria con {Math.round(commerce.transferDiscount * 100)}% de descuento.
+    Podés comprar hasta {commerce.maxQuantityPerItem} unidades de cada variante por pedido.
+  </p>
+
+  <h2>4. Envíos</h2>
+  <p>
+    El envío es gratis en compras desde {formatPrice(commerce.freeShippingThreshold)}. Los plazos están
+    detallados en <a href="/envios">envíos</a>.
+  </p>
+
+  <h2>5. Cambios, devoluciones y arrepentimiento</h2>
+  <p>
+    Podés cambiar o devolver tu compra dentro de los {commerce.returnWindowDays} días. Además, tenés
+    derecho a revocar la compra dentro de los 10 días corridos desde la entrega (art. 34, Ley 24.240)
+    usando el <a href={legal.withdrawalHref}>botón de arrepentimiento</a>.
+  </p>
+
+  <h2>6. Defensa del consumidor</h2>
+  <p>
+    Ante cualquier reclamo podés contactarnos o acudir a{' '}
+    <a href={legal.consumerDefenseUrl} target="_blank" rel="noopener noreferrer">Defensa de las y los Consumidores</a>.
+  </p>
+
+  <h2>7. Privacidad</h2>
+  <p>
+    El tratamiento de tus datos se explica en la <a href={legal.privacyHref}>política de privacidad</a>.
+  </p>
+</InfoLayout>

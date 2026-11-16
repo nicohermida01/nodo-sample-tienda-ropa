@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página no encontrada" description="La página que buscás no existe." noindex>
+  <section class="shell flex min-h-[60svh] flex-col items-center justify-center py-24 text-center">
+    <h1 class="text-[2rem] font-semibold tracking-[-0.02em] lg:text-[2.75rem]">
+      Esta prenda no está en el perchero
+    </h1>
+    <p class="mt-3 max-w-[44ch] text-ink-muted">
+      Error 404: la página que buscás no existe o cambió de lugar. Probá con la tienda o buscá lo que necesitás.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-2">
+      <a href="/tienda" class="btn btn-primary">Ir a la tienda</a>
+      <button type="button" class="btn btn-secondary" data-open-dialog="search-dialog">Buscar</button>
+    </div>
+  </section>
+</BaseLayout>

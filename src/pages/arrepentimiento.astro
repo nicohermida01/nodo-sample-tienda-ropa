@@ -1,0 +1,80 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+import { site } from '../config/site';
+---
+
+<InfoLayout
+  title="Botón de arrepentimiento"
+  description="Revocá tu compra online dentro de los 10 días corridos desde la entrega."
+  lead="Si compraste online, podés arrepentirte dentro de los 10 días corridos desde que recibiste el pedido, sin dar explicaciones y sin costo."
+>
+  <h2>Cómo funciona</h2>
+  <ol>
+    <li>Completá el formulario con tu número de pedido.</li>
+    <li>Te respondemos dentro de las 24 horas con un código de gestión y la etiqueta de envío.</li>
+    <li>Cuando recibimos la prenda, te reintegramos el total por el mismo medio de pago.</li>
+  </ol>
+  <p>
+    Este derecho está previsto en el artículo 34 de la Ley 24.240 de Defensa del Consumidor y en la
+    Resolución 424/2020.
+  </p>
+
+  <h2>Solicitar la revocación</h2>
+  <form class="not-prose mt-4 space-y-5" data-withdrawal novalidate>
+    <div>
+      <label for="w-name" class="label">Nombre y apellido</label>
+      <input id="w-name" name="name" class="field mt-2" autocomplete="name" required />
+    </div>
+    <div>
+      <label for="w-email" class="label">Email</label>
+      <input id="w-email" name="email" type="email" class="field mt-2" autocomplete="email" required />
+    </div>
+    <div>
+      <label for="w-order" class="label">Número de pedido</label>
+      <input id="w-order" name="order" class="field mt-2" inputmode="numeric" required />
+    </div>
+    <p class="text-[0.8125rem] text-ink-muted">
+      Tienda de demostración: este formulario no envía datos. En una tienda real, la solicitud llega a
+      {site.contact.email}.
+    </p>
+    <p class="text-[0.8125rem] text-sale" role="alert" data-withdrawal-error></p>
+    <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+  </form>
+  <p class="mt-6 font-medium" role="status" tabindex="-1" data-withdrawal-done></p>
+</InfoLayout>
+
+<script>
+  import { onPage } from '../lib/client/lifecycle';
+
+  onPage(() => {
+    const form = document.querySelector<HTMLFormElement>('[data-withdrawal]');
+    const done = document.querySelector<HTMLElement>('[data-withdrawal-done]');
+    const error = document.querySelector<HTMLElement>('[data-withdrawal-error]');
+    if (!form || !done || !error) return;
+    const onSubmit = (event: SubmitEvent) => {
+      event.preventDefault();
+      const fields = [...form.querySelectorAll<HTMLInputElement>('input')];
+      const invalid = fields.filter((f) => !f.value.trim() || !f.checkValidity());
+      fields.forEach((f) => f.toggleAttribute('aria-invalid', invalid.includes(f)));
+      if (invalid.length) {
+        const label = form.querySelector(`label[for="${invalid[0].id}"]`)?.textContent ?? 'el campo';
+        error.textContent = `Revisá ${label.toLowerCase()}: falta completarlo o tiene un formato inválido.`;
+        invalid[0].focus();
+        return;
+      }
+      error.textContent = '';
+      form.hidden = true;
+      done.textContent =
+        'Solicitud de demostración registrada. Como es una tienda de prueba, no se envió nada: en una tienda real recibirías tu código de gestión por email en 24 horas.';
+      done.focus();
+    };
+    form.addEventListener('submit', onSubmit);
+    return () => form.removeEventListener('submit', onSubmit);
+  });
+</script>
+
+<style>
+  [aria-invalid] {
+    border-color: var(--color-sale);
+  }
+</style>
