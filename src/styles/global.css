@@ -1,8 +1,576 @@
 @import "tailwindcss";
 
 /*
- * Design tokens. Fill in from the SISTEMA VISUAL section of CLAUDE.md.
- * Components consume tokens only (bg-bg, text-ink, etc.), never raw colors.
+ * Design tokens (SISTEMA VISUAL in CLAUDE.md).
+ * Components consume tokens only (bg-bg, text-ink, var(--color-*)), never raw colors.
  */
 @theme {
+  --color-bg: #ffffff;
+  --color-surface: #f3f3f1;
+  --color-ink: #111111;
+  --color-ink-muted: #6b6b6b;
+  --color-line: #e6e6e3;
+  --color-accent: #9c4b2f;
+  --color-sale: var(--color-accent);
+  --color-on-ink: #ffffff;
+
+  --font-sans: "Inter Tight Variable", "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --container-shell: 90rem;
+  --container-read: 42rem;
+}
+
+/* Non-color layout constants shared by components. */
+:root {
+  --bar-h: 2.25rem;
+  --header-h: 4rem;
+  --gutter: 1rem;
+  --scrim: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  --shadow-overlay: 0 24px 64px -16px color-mix(in srgb, var(--color-ink) 28%, transparent);
+  color-scheme: light;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-ink);
+    accent-color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  .on-photo :focus-visible {
+    outline-color: var(--color-on-ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  /* Let the <img> inside Astro <Picture> take part in its parent layout. */
+  picture {
+    display: contents;
+  }
+
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  * {
+    scrollbar-color: var(--color-ink-muted) transparent;
+    scrollbar-width: thin;
+  }
+}
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: var(--container-shell);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .bleed {
+    padding-inline: 0.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .bleed {
+      padding-inline: 0.75rem;
+    }
+  }
+
+  /* Small uppercase tracked section title, centered (reference pattern). */
+  .section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* UI labels: badges, filter labels, "Color", "Talle". */
+  .label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 2px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background-color 250ms var(--ease-out-expo),
+      color 250ms var(--ease-out-expo),
+      border-color 250ms var(--ease-out-expo);
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  .btn-secondary {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    background: var(--color-line);
+    border-color: var(--color-line);
+    color: var(--color-ink-muted);
+  }
+
+  @media (hover: hover) {
+    .btn-primary:not(:disabled):hover {
+      background: var(--color-bg);
+      color: var(--color-ink);
+    }
+    .btn-secondary:not(:disabled):hover {
+      background: var(--color-ink);
+      color: var(--color-on-ink);
+    }
+  }
+
+  /* White pill, only over campaign photography. */
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-on-ink);
+    background: var(--color-on-ink);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background-color 250ms var(--ease-out-expo),
+      color 250ms var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .btn-pill:hover {
+      background: transparent;
+      color: var(--color-on-ink);
+    }
+  }
+
+  /* Animated underline for text links. */
+  .link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 1px;
+    transition: background-size 350ms var(--ease-out-expo);
+  }
+
+  .link-quiet {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 1px;
+    transition: background-size 350ms var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .link:hover {
+      background-size: 0% 1px;
+      background-position: 100% 100%;
+    }
+    .link-quiet:hover {
+      background-size: 100% 1px;
+    }
+  }
+
+  .link-quiet:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Pill chips (filters / categories); active = filled ink. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.125rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    transition:
+      background-color 200ms var(--ease-out-expo),
+      color 200ms var(--ease-out-expo),
+      border-color 200ms var(--ease-out-expo);
+    cursor: pointer;
+  }
+
+  .chip[aria-pressed="true"],
+  .chip[aria-current="page"] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  @media (hover: hover) {
+    .chip:hover {
+      border-color: var(--color-ink);
+    }
+  }
+
+  /* Size boxes: native radio visually replaced by its label. */
+  .size-option {
+    position: relative;
+  }
+
+  .size-option input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .size-option span {
+    display: grid;
+    place-items: center;
+    min-width: 3rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    background: var(--color-bg);
+    transition:
+      background-color 200ms var(--ease-out-expo),
+      color 200ms var(--ease-out-expo),
+      border-color 200ms var(--ease-out-expo);
+  }
+
+  .size-option input:checked + span {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  .size-option input:focus-visible + span {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  .size-option input:disabled {
+    cursor: not-allowed;
+  }
+
+  .size-option input:disabled + span {
+    color: var(--color-ink-muted);
+    text-decoration: line-through;
+    background: var(--color-surface);
+    border-color: var(--color-surface);
+  }
+
+  @media (hover: hover) {
+    .size-option input:not(:disabled):not(:checked):hover + span {
+      border-color: var(--color-ink);
+    }
+  }
+
+  /* Color swatches: 30px circle, 1px ring; active = ink ring with gap. */
+  .swatch-option {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .swatch-option input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .swatch-option span {
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 999px;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 18%, transparent);
+    outline: 1px solid transparent;
+    outline-offset: 3px;
+    transition: outline-color 200ms var(--ease-out-expo);
+  }
+
+  .swatch-option input:checked + span {
+    outline-color: var(--color-ink);
+  }
+
+  .swatch-option input:focus-visible + span {
+    outline: 2px solid var(--color-ink);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .badge-sale {
+    color: var(--color-sale);
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-size: 1rem;
+    transition: border-color 200ms var(--ease-out-expo);
+  }
+
+  .field::placeholder {
+    color: var(--color-ink-muted);
+  }
+
+  .field:hover,
+  .field:focus {
+    border-color: var(--color-ink);
+  }
+
+  .field:focus-visible {
+    outline-offset: 1px;
+  }
+
+  /* Calm reading measure for informational pages. */
+  .prose-read {
+    max-width: 65ch;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .prose-read h2 {
+    margin-top: 3rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .prose-read > p,
+  .prose-read > ul:not(.not-prose),
+  .prose-read > ol {
+    margin-bottom: 1rem;
+  }
+
+  .prose-read > ul:not(.not-prose) {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+
+  .prose-read > ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+
+  .prose-read > :is(ul:not(.not-prose), ol) li {
+    margin-bottom: 0.375rem;
+  }
+
+  .prose-read > :is(p, ul:not(.not-prose), ol) a:not(.btn) {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 350ms var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .prose-read > :is(p, ul:not(.not-prose), ol) a:not(.btn):hover {
+      background-size: 0% 1px;
+      background-position: 100% 100%;
+    }
+  }
+
+  .prose-read strong {
+    font-weight: 600;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Native dialogs used as drawers, sheets and modals. */
+  dialog.overlay {
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-overlay);
+  }
+
+  dialog.overlay::backdrop {
+    background: color-mix(in srgb, var(--color-ink) 40%, transparent);
+  }
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bump {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll-driven reveal: visible by default, animated only where supported. */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timing-function: var(--ease-out-expo);
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 4%) entry calc(55% + var(--i, 0) * 4%);
+    }
+  }
+
+  /* IntersectionObserver fallback: the hidden state only exists once JS opts in. */
+  html.io-reveal .reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  html.io-reveal .reveal {
+    transition:
+      opacity 700ms var(--ease-out-expo),
+      transform 700ms var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  dialog.overlay[open] {
+    animation: fade-in 250ms var(--ease-out-expo);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
