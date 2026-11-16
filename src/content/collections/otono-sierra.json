@@ -12,5 +12,10 @@
   "hero": {
     "src": "../../assets/campaign/otono-sierra-hero.jpg",
     "alt": "Foto de ejemplo: campaña Otoño Sierra a pantalla completa."
+  },
+  "coverLine": "Lana, lino y paño en tonos de piedra y musgo.",
+  "heroMobile": {
+    "src": "../../assets/campaign/otono-sierra-hero-mobile.jpg",
+    "alt": "Foto de ejemplo: campaña Otoño Sierra en formato vertical."
   }
 }

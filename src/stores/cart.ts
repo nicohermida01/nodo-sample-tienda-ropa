@@ -35,6 +35,8 @@ const MAX_QTY = site.commerce.maxQuantityPerItem;
  */
 function createSafeStorage(): PersistentStore {
   const memory: PersistentStore = {};
+  /** Keys whose last write to localStorage failed: memory holds the newer value. */
+  const unsynced = new Set<string>();
   const storage = (): Storage | undefined => {
     try {
       return typeof localStorage === 'undefined' ? undefined : localStorage;
@@ -45,8 +47,11 @@ function createSafeStorage(): PersistentStore {
   return new Proxy(memory, {
     get(target, prop) {
       if (typeof prop !== 'string') return undefined;
+      const s = storage();
+      if (!s || unsynced.has(prop)) return target[prop];
       try {
-        return storage()?.getItem(prop) ?? target[prop];
+        // null means "not stored": report undefined so the store uses its initial value.
+        return s.getItem(prop) ?? undefined;
       } catch {
         return target[prop];
       }
@@ -55,25 +60,29 @@ function createSafeStorage(): PersistentStore {
       if (typeof prop !== 'string') return false;
       target[prop] = value;
       try {
-        storage()?.setItem(prop, value);
+        const s = storage();
+        if (!s) throw new Error('storage unavailable');
+        s.setItem(prop, value);
+        unsynced.delete(prop);
       } catch {
-        /* keep the in-memory copy */
+        unsynced.add(prop);
       }
       return true;
     },
     has(target, prop) {
       if (typeof prop !== 'string') return false;
+      const s = storage();
+      if (!s || unsynced.has(prop)) return prop in target;
       try {
-        const s = storage();
-        if (s && s.getItem(prop) !== null) return true;
+        return s.getItem(prop) !== null;
       } catch {
-        /* fall through to memory */
+        return prop in target;
       }
-      return prop in target;
     },
     deleteProperty(target, prop) {
       if (typeof prop !== 'string') return false;
       delete target[prop];
+      unsynced.delete(prop);
       try {
         storage()?.removeItem(prop);
       } catch {
@@ -88,18 +97,30 @@ if (typeof window !== 'undefined') {
   setPersistentEngine(createSafeStorage(), windowPersistentEvents);
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
 const isCartItem = (value: unknown): value is CartItem => {
-  if (typeof value !== 'object' || value === null) return false;
-  const v = value as Record<string, unknown>;
+  if (!isRecord(value)) return false;
+  const v = value;
   return (
     typeof v.key === 'string' &&
     typeof v.productId === 'string' &&
     typeof v.slug === 'string' &&
     typeof v.name === 'string' &&
     typeof v.price === 'number' &&
+    Number.isFinite(v.price) &&
+    v.price > 0 &&
     typeof v.size === 'string' &&
-    typeof v.quantity === 'number' &&
-    v.quantity > 0
+    Number.isInteger(v.quantity) &&
+    (v.quantity as number) >= 1 &&
+    (v.quantity as number) <= MAX_QTY &&
+    isRecord(v.color) &&
+    typeof v.color.name === 'string' &&
+    typeof v.color.hex === 'string' &&
+    isRecord(v.image) &&
+    typeof v.image.src === 'string' &&
+    typeof v.image.alt === 'string'
   );
 };
 
@@ -136,12 +157,15 @@ export const $freeShippingRemaining = computed($cartSubtotal, (subtotal) =>
   Math.max(0, site.commerce.freeShippingThreshold - subtotal),
 );
 
-const clamp = (qty: number) => Math.min(MAX_QTY, Math.max(1, Math.floor(qty)));
+/** Callers must pass a finite number; non-finite input falls back to 1. */
+const clamp = (qty: number) =>
+  Number.isFinite(qty) ? Math.min(MAX_QTY, Math.max(1, Math.floor(qty))) : 1;
 
 export const cartKey = (productId: string, colorName: string, size: string) =>
   `${productId}:${colorName}:${size}`;
 
 export function addItem(item: NewCartItem, quantity = 1): void {
+  if (!Number.isFinite(quantity) || quantity <= 0) return;
   const key = cartKey(item.productId, item.color.name, item.size);
   const items = $cartItems.get();
   const existing = items.find((i) => i.key === key);
@@ -156,8 +180,9 @@ export function removeItem(key: string): void {
   $cartItems.set($cartItems.get().filter((i) => i.key !== key));
 }
 
-/** Sets an exact quantity; 0 or less removes the line. */
+/** Sets an exact quantity; 0 or less removes the line, non-finite input is ignored. */
 export function setQuantity(key: string, quantity: number): void {
+  if (!Number.isFinite(quantity)) return;
   if (quantity <= 0) return removeItem(key);
   $cartItems.set(
     $cartItems.get().map((i) => (i.key === key ? { ...i, quantity: clamp(quantity) } : i)),

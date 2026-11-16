@@ -28,6 +28,14 @@ export interface SiteConfig {
     addToCart: string;
     soldOut: string;
     selectSize: string;
+    home: {
+      heroCta: string;
+      collectionsTitle: string;
+      newArrivalsTitle: string;
+      categoriesTitle: string;
+      editorial: { title: string; text: string; cta: NavItem };
+    };
+    newsletterConfirmation: string;
   };
   nav: {
     main: NavItem[];
@@ -61,6 +69,12 @@ export interface SiteConfig {
     withdrawalHref: string;
   };
   demoNotice: { enabled: boolean; text: string };
+  /** Reference body measurements in cm, per size. */
+  sizeGuide: {
+    note: string;
+    columns: string[];
+    rows: { size: string; values: number[] }[];
+  };
 }
 
 const commerce: SiteConfig['commerce'] = {
@@ -110,6 +124,19 @@ export const site: SiteConfig = {
     addToCart: 'Agregar al carrito',
     soldOut: 'Sin stock',
     selectSize: 'Elegí un talle',
+    home: {
+      heroCta: 'Ver la colección',
+      collectionsTitle: 'Colecciones',
+      newArrivalsTitle: 'Novedades',
+      categoriesTitle: 'Comprá por categoría',
+      editorial: {
+        title: 'Hecho despacio, para usarse mucho',
+        text: 'Diseñamos en nuestro estudio de Córdoba y producimos en talleres chicos de la provincia, en tiradas cortas. Elegimos fibras nobles, terminaciones que aguantan el lavado y cortes que no dependen de una temporada. Preferimos que tengas pocas prendas y que las uses durante años.',
+        cta: { label: 'Visitá el showroom', href: '/contacto' },
+      },
+    },
+    newsletterConfirmation:
+      'Listo, quedaste anotado. Es una tienda de demostración: no guardamos ni enviamos tu email.',
   },
   nav: {
     main: [
@@ -171,5 +198,16 @@ export const site: SiteConfig = {
   demoNotice: {
     enabled: true,
     text: 'Tienda de demostración: la marca, los productos y los precios son ficticios.',
+  },
+  sizeGuide: {
+    note: 'Medidas corporales de referencia, en centímetros. Si estás entre dos talles, para prendas de calce amplio elegí el menor; para camisas y sastrería, el mayor.',
+    columns: ['Pecho', 'Cintura', 'Cadera', 'Largo de tiro'],
+    rows: [
+      { size: 'XS', values: [84, 68, 90, 76] },
+      { size: 'S', values: [90, 74, 96, 78] },
+      { size: 'M', values: [96, 80, 102, 80] },
+      { size: 'L', values: [102, 86, 108, 82] },
+      { size: 'XL', values: [110, 94, 116, 84] },
+    ],
   },
 };

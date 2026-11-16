@@ -16,6 +16,13 @@ export const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'U'] as const;
 
 export const IMAGE_VIEWS = ['frente', 'espalda', 'detalle', 'look'] as const;
 
+/**
+ * Entry ids come from the file name. Astro's default glob id would prefer a
+ * `slug` field, which lets two files with the same slug silently overwrite
+ * each other; src/lib/products.ts fails the build when slug and file differ.
+ */
+const fileId = ({ entry }: { entry: string }) => entry.replace(/\.json$/, '');
+
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use kebab-case');
 const hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Use a 6-digit hex color');
 const ars = z.number().int().positive();
@@ -24,7 +31,7 @@ const products = defineCollection({
   loader: glob({
     pattern: '**/*.json',
     base: './src/content/products',
-    generateId: ({ data }) => String(data.slug),
+    generateId: fileId,
   }),
   schema: ({ image }) =>
     z
@@ -70,7 +77,7 @@ const products = defineCollection({
         path: ['compareAtPrice'],
       })
       .refine(
-        (p) => p.composition.reduce((sum, c) => sum + c.percent, 0) === 100,
+        (p) => Math.abs(p.composition.reduce((sum, c) => sum + c.percent, 0) - 100) < 0.01,
         { message: 'composition percentages must add up to 100', path: ['composition'] },
       )
       .refine((p) => new Set(p.sizes.map((s) => s.label)).size === p.sizes.length, {
@@ -83,7 +90,7 @@ const productCollections = defineCollection({
   loader: glob({
     pattern: '**/*.json',
     base: './src/content/collections',
-    generateId: ({ data }) => String(data.slug),
+    generateId: fileId,
   }),
   schema: ({ image }) =>
     z.object({
@@ -96,6 +103,10 @@ const productCollections = defineCollection({
       description: z.string().min(1),
       cover: z.object({ src: image(), alt: z.string().min(10) }),
       hero: z.object({ src: image(), alt: z.string().min(10) }).optional(),
+      /** 4:5 art-directed crop of the hero for narrow screens. */
+      heroMobile: z.object({ src: image(), alt: z.string().min(10) }).optional(),
+      /** Short line for the collection cover tile; distinct from the hero tagline. */
+      coverLine: z.string().min(1).optional(),
     }),
 });
 

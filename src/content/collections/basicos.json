@@ -8,5 +8,6 @@
   "cover": {
     "src": "../../assets/campaign/basicos-cover.jpg",
     "alt": "Foto de ejemplo: portada de la colección Básicos."
-  }
+  },
+  "coverLine": "Remeras, camisas y jeans en los mismos colores de siempre."
 }
