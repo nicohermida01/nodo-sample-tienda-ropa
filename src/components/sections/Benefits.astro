@@ -1,0 +1,63 @@
+---
+import { site, formatPrice } from '../../config/site';
+import Icon, { type IconName } from '../ui/Icon.astro';
+
+const { freeShippingThreshold, installments, transferDiscount, returnWindowDays } = site.commerce;
+
+const items: { icon: IconName; title: string; text: string; href: string }[] = [
+  {
+    icon: 'truck',
+    title: `Envío gratis desde ${formatPrice(freeShippingThreshold)}`,
+    text: 'A todo el país. Despachamos en 24 a 48 horas hábiles.',
+    href: '/envios',
+  },
+  {
+    icon: 'card',
+    title: `${installments.count} cuotas${installments.interestFree ? ' sin interés' : ''}`,
+    text: `Con todas las tarjetas, o ${Math.round(transferDiscount * 100)}% off pagando por transferencia.`,
+    href: '/preguntas-frecuentes',
+  },
+  {
+    icon: 'returns',
+    title: `Cambios dentro de los ${returnWindowDays} días`,
+    text: 'El primer cambio no tiene costo. También en el showroom.',
+    href: '/cambios-y-devoluciones',
+  },
+];
+---
+
+<section class="border-y border-line bg-surface" aria-label="Beneficios de compra">
+  <ul class="shell grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
+    {
+      items.map((item) => (
+        <li>
+          <a href={item.href} class="benefit">
+            <Icon name={item.icon} size={22} class="mt-0.5 shrink-0" />
+            <span>
+              <span class="block text-[0.875rem] font-semibold">{item.title}</span>
+              <span class="mt-1 block text-[0.8125rem] text-ink-muted">{item.text}</span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .benefit {
+    display: flex;
+    gap: 1rem;
+    padding: 1.75rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .benefit {
+      padding: 2.25rem 2rem;
+      height: 100%;
+    }
+    li:first-child .benefit {
+      padding-left: 0;
+    }
+  }
+</style>

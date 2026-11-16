@@ -1,0 +1,57 @@
+---
+import { site } from '../../config/site';
+
+const { title, text, placeholder, cta, legal } = site.copy.newsletter;
+---
+
+<section class="shell py-20 lg:py-32" aria-labelledby="newsletter-title">
+  <div class="mx-auto max-w-xl text-center">
+    <h2 id="newsletter-title" class="text-[1.75rem] font-semibold tracking-[-0.02em] lg:text-[2.25rem]">
+      {title}
+    </h2>
+    <p class="mt-3 text-ink-muted">{text}</p>
+    <form class="mt-8 flex flex-col gap-2 sm:flex-row" data-newsletter novalidate>
+      <label for="newsletter-email" class="sr-only">Email</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        placeholder={placeholder}
+        class="field flex-1"
+        aria-describedby="newsletter-legal newsletter-msg"
+      />
+      <button type="submit" class="btn btn-primary">{cta}</button>
+    </form>
+    <p id="newsletter-legal" class="mt-3 text-[0.75rem] text-ink-muted">{legal}</p>
+    <p id="newsletter-msg" class="mt-4 text-[0.875rem]" role="status" data-newsletter-msg></p>
+  </div>
+</section>
+
+<script>
+  import { onPage } from '../../lib/client/lifecycle';
+  import { site } from '../../config/site';
+
+  onPage(() => {
+    const form = document.querySelector<HTMLFormElement>('[data-newsletter]');
+    const msg = document.querySelector<HTMLElement>('[data-newsletter-msg]');
+    if (!form || !msg) return;
+    const onSubmit = (event: SubmitEvent) => {
+      event.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
+      if (!input.checkValidity()) {
+        input.setAttribute('aria-invalid', 'true');
+        msg.textContent = 'Revisá el email: tiene que tener el formato nombre@dominio.com.';
+        input.focus();
+        return;
+      }
+      input.removeAttribute('aria-invalid');
+      // Demo: nothing is sent or stored.
+      form.reset();
+      msg.textContent = site.copy.newsletterConfirmation;
+    };
+    form.addEventListener('submit', onSubmit);
+    return () => form.removeEventListener('submit', onSubmit);
+  });
+</script>

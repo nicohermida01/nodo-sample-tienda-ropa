@@ -1,0 +1,311 @@
+---
+import { site, formatPrice } from '../../config/site';
+import Icon from '../ui/Icon.astro';
+import CartLineTemplate from './CartLineTemplate.astro';
+---
+
+<div id="cart-island" transition:persist="cart-island">
+  <dialog id="cart-drawer" class="overlay cart-drawer" aria-labelledby="cart-title" data-cart-root>
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between border-b border-line px-5 py-3">
+        <h2 id="cart-title" class="label" tabindex="-1" data-cart-focus>
+          Tu carrito <span data-drawer-count class="tabular-nums"></span>
+        </h2>
+        <button type="button" class="drawer-close" data-drawer-close>
+          <Icon name="x" size={22} />
+          <span class="sr-only">Cerrar carrito</span>
+        </button>
+      </div>
+
+      <div class="border-b border-line px-5 py-4" data-shipping>
+        <p class="text-[0.8125rem]" data-shipping-text>
+          Envío gratis en compras desde {formatPrice(site.commerce.freeShippingThreshold)}
+        </p>
+        <div class="progress mt-2" aria-hidden="true">
+          <span data-shipping-bar></span>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-5">
+        <CartLineTemplate />
+        <ul data-drawer-lines></ul>
+        <div class="flex h-full flex-col items-center justify-center py-16 text-center" data-drawer-empty>
+          <Icon name="bag" size={28} class="text-ink-muted" />
+          <p class="mt-4 font-medium">Tu carrito está vacío</p>
+          <p class="mt-1 max-w-[18rem] text-[0.875rem] text-ink-muted">
+            Elegí tus prendas y las vas a ver acá, con talle y color.
+          </p>
+          <a href="/tienda" class="btn btn-primary mt-6">Ver la tienda</a>
+        </div>
+      </div>
+
+      <div class="border-t border-line px-5 pt-4 pb-5" data-drawer-footer>
+        <div class="flex items-baseline justify-between">
+          <span class="text-[0.875rem]">Subtotal</span>
+          <span class="text-[1rem] font-semibold tabular-nums" data-drawer-subtotal></span>
+        </div>
+        <p class="mt-1 text-[0.75rem] text-ink-muted">
+          IVA incluido. El envío y el descuento por transferencia se ven en el carrito.
+        </p>
+        <a href="/carrito" class="btn btn-primary mt-4 w-full">Ir al carrito</a>
+        <button type="button" class="mt-2 inline-flex min-h-11 w-full items-center justify-center text-[0.8125rem]" data-drawer-close>
+          <span class="link">Seguir comprando</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="cart-toast" role="status" aria-live="polite" data-toast>
+    <div class="toast-card" data-toast-card hidden>
+      <span class="toast-thumb" data-toast-thumb></span>
+      <div class="min-w-0 flex-1">
+        <p class="flex items-center gap-1.5 text-[0.8125rem] font-semibold">
+          <Icon name="check" size={16} />
+          Agregado al carrito
+        </p>
+        <p class="truncate text-[0.8125rem]" data-toast-name></p>
+        <p class="text-[0.75rem] text-ink-muted" data-toast-variant></p>
+      </div>
+      <button type="button" class="toast-action" data-open-cart>
+        <span class="link">Ver carrito</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    $cartItems,
+    $cartCount,
+    $cartSubtotal,
+    $freeShippingRemaining,
+    $isCartOpen,
+    $lastAdded,
+    closeCart,
+  } from '../../stores/cart';
+  import { site, formatPrice } from '../../config/site';
+  import { renderLines, bindLineControls } from '../../lib/client/cart-lines';
+
+  // The island persists across view transitions, so this runs exactly once.
+  const dialog = document.getElementById('cart-drawer') as HTMLDialogElement;
+  const lines = dialog.querySelector<HTMLUListElement>('[data-drawer-lines]')!;
+  const template = dialog.querySelector<HTMLTemplateElement>('[data-line-template]')!;
+  const empty = dialog.querySelector<HTMLElement>('[data-drawer-empty]')!;
+  const footer = dialog.querySelector<HTMLElement>('[data-drawer-footer]')!;
+  const shipping = dialog.querySelector<HTMLElement>('[data-shipping]')!;
+  const shippingText = dialog.querySelector<HTMLElement>('[data-shipping-text]')!;
+  const shippingBar = dialog.querySelector<HTMLElement>('[data-shipping-bar]')!;
+  const count = dialog.querySelector<HTMLElement>('[data-drawer-count]')!;
+  const subtotal = dialog.querySelector<HTMLElement>('[data-drawer-subtotal]')!;
+  const threshold = site.commerce.freeShippingThreshold;
+  let opener: HTMLElement | null = null;
+
+  $cartItems.subscribe((items) => {
+    renderLines(lines, template, items);
+    const isEmpty = items.length === 0;
+    empty.hidden = !isEmpty;
+    footer.hidden = isEmpty;
+    shipping.hidden = isEmpty;
+  });
+  $cartCount.subscribe((n) => {
+    count.textContent = n ? `(${n})` : '';
+  });
+  $cartSubtotal.subscribe((value) => {
+    subtotal.textContent = formatPrice(value);
+    shippingBar.style.transform = `scaleX(${Math.min(1, value / threshold)})`;
+  });
+  $freeShippingRemaining.subscribe((remaining) => {
+    shippingText.textContent = remaining
+      ? `Te faltan ${formatPrice(remaining)} para tener envío gratis.`
+      : 'Tenés envío gratis en esta compra.';
+  });
+  bindLineControls(lines, () => $cartItems.get());
+
+  $isCartOpen.subscribe((open) => {
+    if (open && !dialog.open) {
+      opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      hideToast();
+      dialog.showModal();
+      dialog.querySelector<HTMLElement>('[data-cart-focus]')?.focus();
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
+  });
+  dialog.addEventListener('close', () => {
+    closeCart();
+    if (opener?.isConnected) opener.focus();
+    opener = null;
+  });
+  dialog.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (target === dialog || target.closest('[data-drawer-close]')) closeCart();
+  });
+
+  // Added-to-cart confirmation with the item's thumbnail.
+  const toast = document.querySelector<HTMLElement>('[data-toast-card]')!;
+  const toastThumb = toast.querySelector<HTMLElement>('[data-toast-thumb]')!;
+  const toastName = toast.querySelector<HTMLElement>('[data-toast-name]')!;
+  const toastVariant = toast.querySelector<HTMLElement>('[data-toast-variant]')!;
+  let timer: number | undefined;
+  function hideToast() {
+    window.clearTimeout(timer);
+    toast.hidden = true;
+  }
+  $lastAdded.listen((item) => {
+    if (!item || $isCartOpen.get()) return;
+    const img = new Image(56, 70);
+    img.src = item.image.src;
+    img.alt = '';
+    toastThumb.replaceChildren(img);
+    toastName.textContent = item.name;
+    toastVariant.textContent = `${item.color.name} · Talle ${item.size}`;
+    toast.hidden = false;
+    toast.classList.remove('is-in');
+    void toast.offsetWidth;
+    toast.classList.add('is-in');
+    window.clearTimeout(timer);
+    timer = window.setTimeout(hideToast, 5000);
+  });
+  toast.addEventListener('mouseenter', () => window.clearTimeout(timer));
+  toast.addEventListener('mouseleave', () => {
+    timer = window.setTimeout(hideToast, 2500);
+  });
+  toast.addEventListener('focusin', () => window.clearTimeout(timer));
+</script>
+
+<style>
+  .cart-drawer {
+    width: min(26rem, 100%);
+    height: 100dvh;
+    inset: 0 0 0 auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cart-drawer {
+      transition:
+        transform 450ms var(--ease-out-expo),
+        overlay 450ms allow-discrete,
+        display 450ms allow-discrete;
+      transform: translateX(100%);
+    }
+    .cart-drawer[open] {
+      transform: none;
+      animation: none;
+    }
+    @starting-style {
+      .cart-drawer[open] {
+        transform: translateX(100%);
+      }
+    }
+    .cart-drawer::backdrop {
+      transition:
+        opacity 450ms var(--ease-out-expo),
+        overlay 450ms allow-discrete,
+        display 450ms allow-discrete;
+      opacity: 0;
+    }
+    .cart-drawer[open]::backdrop {
+      opacity: 1;
+    }
+    @starting-style {
+      .cart-drawer[open]::backdrop {
+        opacity: 0;
+      }
+    }
+  }
+
+  .drawer-close {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-right: -0.75rem;
+    cursor: pointer;
+  }
+
+  .progress {
+    height: 2px;
+    background: var(--color-line);
+    overflow: hidden;
+  }
+
+  .progress span {
+    display: block;
+    height: 100%;
+    background: var(--color-ink);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 600ms var(--ease-out-expo);
+  }
+
+  .cart-toast {
+    position: fixed;
+    z-index: 60;
+    right: 0.75rem;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    pointer-events: none;
+  }
+
+  /* Pages with a sticky bottom add-to-cart bar: keep the toast above it. */
+  :global(body:has([data-sticky-cta])) .cart-toast {
+    bottom: calc(4.5rem + env(safe-area-inset-bottom) + 0.75rem);
+  }
+
+  @media (min-width: 640px) {
+    .cart-toast,
+    :global(body:has([data-sticky-cta])) .cart-toast {
+      left: auto;
+      bottom: auto;
+      top: calc(var(--header-h) + 0.75rem);
+      right: var(--gutter);
+      width: 22rem;
+    }
+  }
+
+  .toast-card {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-overlay);
+  }
+
+  .toast-thumb {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 4.375rem;
+    background: var(--color-surface);
+  }
+
+  .toast-thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .toast-action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.25rem;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .toast-card:global(.is-in) {
+      animation: toast-in 500ms var(--ease-out-expo);
+    }
+    @keyframes toast-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+    }
+  }
+</style>

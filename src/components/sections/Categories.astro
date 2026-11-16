@@ -1,0 +1,88 @@
+---
+import { Picture } from 'astro:assets';
+import { site } from '../../config/site';
+import { CATEGORY_LABELS, type Category, type Product } from '../../lib/products';
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+const seen = new Set<Category>();
+const tiles = products.flatMap((p) => {
+  if (seen.has(p.data.category)) return [];
+  seen.add(p.data.category);
+  return [{ category: p.data.category, image: p.data.images[0] }];
+});
+---
+
+<section class="bleed py-16 lg:py-24" aria-labelledby="categories-title">
+  <h2 id="categories-title" class="section-title">{site.copy.home.categoriesTitle}</h2>
+  <ul class="mt-8 grid grid-cols-2 gap-2 md:grid-cols-3 lg:mt-10 lg:gap-3 xl:grid-cols-6">
+    {
+      tiles.map((t, i) => (
+        <li class="reveal" style={`--i:${i % 6}`}>
+          <a href={`/tienda?categoria=${t.category}`} class="tile">
+            <Picture
+              src={t.image.src}
+              alt=""
+              widths={[320, 480, 640]}
+              sizes="(min-width: 1280px) 16vw, (min-width: 768px) 33vw, 50vw"
+              formats={['avif', 'webp']}
+              loading="lazy"
+              class="tile-img"
+            />
+            <span class="tile-name">{CATEGORY_LABELS[t.category]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .tile {
+    position: relative;
+    display: grid;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .tile :global(.tile-img) {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 900ms var(--ease-out-expo);
+  }
+
+  .tile-name {
+    grid-area: 1 / 1;
+    align-self: end;
+    justify-self: center;
+    position: relative;
+    margin-bottom: 1rem;
+    padding: 0.625rem 1rem;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    transition:
+      background-color 250ms var(--ease-out-expo),
+      color 250ms var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .tile:hover :global(.tile-img) {
+      transform: scale(1.04);
+    }
+    .tile:hover .tile-name {
+      background: var(--color-ink);
+      color: var(--color-on-ink);
+    }
+  }
+</style>

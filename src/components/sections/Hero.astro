@@ -1,0 +1,261 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { site, formatPrice } from '../../config/site';
+import {
+  productHref,
+  toCartPayload,
+  type Product,
+  type ProductCollection,
+} from '../../lib/products';
+
+interface Props {
+  collection: ProductCollection;
+  featured: Product;
+}
+
+const { collection, featured } = Astro.props;
+const media = collection.data.hero ?? collection.data.cover;
+const mobile = collection.data.heroMobile;
+
+/**
+ * Art direction: a 4:5 crop below 768px and the 16:9 campaign above.
+ * <Picture /> has no per-media sources, so sources come from getImage().
+ */
+const MOBILE_QUERY = '(max-width: 767px)';
+const srcset = async (src: ImageMetadata, widths: number[], format: 'avif' | 'webp') =>
+  (await getImage({ src, widths, format })).srcSet.attribute;
+const desktopWidths = [960, 1280, 1920, 2400];
+const mobileWidths = [480, 768, 1080, 1200];
+const sources = [
+  ...(mobile
+    ? [
+        { media: MOBILE_QUERY, type: 'image/avif', srcset: await srcset(mobile.src, mobileWidths, 'avif') },
+        { media: MOBILE_QUERY, type: 'image/webp', srcset: await srcset(mobile.src, mobileWidths, 'webp') },
+      ]
+    : []),
+  { media: undefined, type: 'image/avif', srcset: await srcset(media.src, desktopWidths, 'avif') },
+  { media: undefined, type: 'image/webp', srcset: await srcset(media.src, desktopWidths, 'webp') },
+];
+const fallback = await getImage({ src: media.src, width: 1920, format: 'jpg' });
+const payload = await toCartPayload(featured);
+const { data } = featured;
+const single = data.sizes.length === 1 && data.sizes[0].inStock ? data.sizes[0].label : null;
+---
+
+<section class="hero on-photo" aria-labelledby="hero-title">
+  <div class="hero-media">
+    <picture>
+      {sources.map((source) => <source media={source.media} type={source.type} srcset={source.srcset} sizes="100vw" />)}
+      <img
+        src={fallback.src}
+        alt={media.alt}
+        width={media.src.width}
+        height={media.src.height}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="hero-img"
+      />
+    </picture>
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1 id="hero-title" class="hero-title">{collection.data.name}</h1>
+      <p class="hero-tagline">{collection.data.tagline}</p>
+      <a href={`/colecciones/${collection.data.slug}`} class="btn-pill mt-8">
+        {site.copy.home.heroCta}
+      </a>
+    </div>
+
+    <aside class="look" aria-labelledby="look-title">
+      <form
+        class="look-form"
+        id="hero-look"
+        data-add-to-cart
+        data-product={JSON.stringify(payload)}
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <h2 id="look-title" class="text-[0.9375rem] font-semibold leading-snug">
+              <a href={productHref(featured)} class="link-quiet">{data.name}</a>
+            </h2>
+            <p class="mt-0.5 text-[0.8125rem] text-ink-muted">
+              En la foto de campaña · {data.colors[0].name}
+            </p>
+          </div>
+          <p class="shrink-0 text-[0.9375rem] tabular-nums">{formatPrice(data.price)}</p>
+        </div>
+        <input type="hidden" name="color" value={data.colors[0].name} />
+        <fieldset class="mt-3">
+          <legend class="sr-only">Talle</legend>
+          <div class="flex flex-wrap gap-1.5">
+            {
+              data.sizes.map((s) => (
+                <label class="size-option">
+                  <input
+                    type="radio"
+                    name="size"
+                    value={s.label}
+                    disabled={!s.inStock}
+                    checked={single === s.label}
+                    aria-describedby={s.inStock ? undefined : 'look-soldout'}
+                  />
+                  <span>{s.label}</span>
+                </label>
+              ))
+            }
+          </div>
+          <span id="look-soldout" class="sr-only">{site.copy.soldOut}</span>
+        </fieldset>
+        <button type="submit" class="btn btn-primary mt-3 w-full" data-submit disabled={!single}>
+          {site.copy.addToCart}
+        </button>
+        <p class="mt-2 text-[0.75rem] text-ink-muted" data-size-hint hidden={Boolean(single)}>
+          {site.copy.selectSize} para agregarlo.
+        </p>
+      </form>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: calc(100svh - var(--bar-h));
+    overflow: hidden;
+    color: var(--color-on-ink);
+    background: var(--color-ink);
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero-media :global(.hero-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--scrim);
+  }
+
+  .hero-inner {
+    min-height: calc(100svh - var(--bar-h));
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: calc(var(--header-h) + 1.5rem) var(--gutter) var(--gutter);
+  }
+
+  .hero-copy {
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 52rem;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(4rem, 13vw, 11rem);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-tagline {
+    margin-top: 1.25rem;
+    max-width: 34ch;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .look {
+    margin-top: 2rem;
+    width: 100%;
+  }
+
+  .look-form {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    padding: 1rem;
+  }
+
+  .look-form :focus-visible {
+    outline-color: var(--color-ink);
+  }
+
+  @media (min-width: 640px) {
+    .look {
+      width: 22rem;
+      justify-self: start;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      min-height: max(calc(100svh - var(--bar-h)), 40rem);
+    }
+    .hero-inner {
+      min-height: max(calc(100svh - var(--bar-h)), 40rem);
+      grid-template-rows: 1fr;
+      padding-bottom: 2rem;
+    }
+    .hero-copy {
+      grid-area: 1 / 1;
+    }
+    .look {
+      grid-area: 1 / 1;
+      align-self: end;
+      margin-top: 0;
+    }
+    .hero-tagline {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* Light parallax on the campaign photo, CSS only. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .hero-media {
+        animation: hero-parallax linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100svh;
+      }
+      @keyframes hero-parallax {
+        to {
+          transform: translateY(12%);
+        }
+      }
+    }
+
+    .hero-copy > * {
+      animation: hero-in 900ms var(--ease-out-expo) both;
+    }
+    .hero-copy > :nth-child(2) {
+      animation-delay: 120ms;
+    }
+    .hero-copy > :nth-child(3) {
+      animation-delay: 220ms;
+    }
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+  }
+</style>

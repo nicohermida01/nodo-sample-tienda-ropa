@@ -1,0 +1,92 @@
+---
+import Icon from '../ui/Icon.astro';
+---
+
+<template data-line-template>
+  <li class="cart-line">
+    <a data-line-link class="cart-line-media" tabindex="-1" aria-hidden="true">
+      <span data-line-thumb></span>
+    </a>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <div class="flex items-start justify-between gap-3">
+        <a data-line-link class="text-[0.875rem] font-medium leading-snug">
+          <span class="link-quiet" data-line-name></span>
+        </a>
+        <p class="shrink-0 text-[0.875rem] tabular-nums" data-line-price></p>
+      </div>
+      <p class="mt-1 text-[0.8125rem] text-ink-muted" data-line-variant></p>
+      <div class="mt-auto flex items-center justify-between pt-3">
+        <div class="stepper">
+          <button type="button" data-line-dec><Icon name="minus" size={16} /></button>
+          <span data-line-qty class="tabular-nums"></span>
+          <button type="button" data-line-inc><Icon name="plus" size={16} /></button>
+        </div>
+        <button type="button" class="remove-btn" data-line-remove>
+          <Icon name="trash" size={18} />
+        </button>
+      </div>
+    </div>
+  </li>
+</template>
+
+<style is:global>
+  .cart-line {
+    display: flex;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .cart-line-media {
+    flex-shrink: 0;
+    width: 5rem;
+    aspect-ratio: 4 / 5;
+    background: var(--color-surface);
+  }
+
+  .cart-line-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+  }
+
+  .stepper button,
+  .remove-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    cursor: pointer;
+    color: var(--color-ink);
+  }
+
+  .stepper button:disabled {
+    color: var(--color-ink-muted);
+    cursor: not-allowed;
+  }
+
+  .stepper span {
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+  }
+
+  .remove-btn {
+    margin-right: -0.75rem;
+    color: var(--color-ink-muted);
+    transition: color 200ms var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .remove-btn:hover {
+      color: var(--color-ink);
+    }
+  }
+</style>
