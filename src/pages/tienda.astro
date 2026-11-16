@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import Catalog from '../components/product/Catalog.astro';
+import { getProducts } from '../lib/products';
+
+const products = await getProducts();
+---
+
+<BaseLayout
+  title="Toda la tienda"
+  description="Toda la ropa de TRAMA Estudio: remeras, camisas, pantalones, abrigos, vestidos y accesorios diseñados en Córdoba."
+>
+  <PageIntro
+    title="Toda la tienda"
+    lead="Prendas de temporada y básicos de siempre. Filtrá por talle, color o precio."
+    breadcrumb={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Tienda', href: '/tienda' },
+    ]}
+  />
+  <Catalog products={products} />
+</BaseLayout>

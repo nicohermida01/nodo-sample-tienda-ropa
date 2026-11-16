@@ -1,16 +1,52 @@
 ---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import FeaturedCollections from '../components/sections/FeaturedCollections.astro';
+import ProductRow from '../components/product/ProductRow.astro';
+import Editorial from '../components/sections/Editorial.astro';
+import Categories from '../components/sections/Categories.astro';
+import Benefits from '../components/sections/Benefits.astro';
+import Newsletter from '../components/sections/Newsletter.astro';
+import { site } from '../config/site';
+import { getProducts, getProductCollections, sortProducts } from '../lib/products';
+
+const products = await getProducts();
+const collections = await getProductCollections();
+const current = collections.find((c) => c.data.status === 'current') ?? collections[0];
+const inCurrent = sortProducts(
+  products.filter((p) => p.data.collection.id === current.id),
+  'nuevos',
+);
+const featured = inCurrent.find((p) => p.data.featured) ?? inCurrent[0] ?? products[0];
+const newArrivals = sortProducts(
+  products.filter((p) => p.data.isNew),
+  'nuevos',
+);
+const lookImage =
+  inCurrent.flatMap((p) => p.data.images).find((img) => img.view === 'look') ??
+  current.data.cover;
+
+const heroMedia = current.data.hero ?? current.data.cover;
+const og = await getImage({ src: heroMedia.src, width: 1200, format: 'jpg' });
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  overlayHeader
+  description={site.brand.description}
+  image={new URL(og.src, site.url).href}
+  imageAlt={heroMedia.alt}
+>
+  <Hero collection={current} featured={featured} />
+  <FeaturedCollections collections={collections} />
+  <ProductRow
+    id="novedades-row"
+    title={site.copy.home.newArrivalsTitle}
+    products={newArrivals}
+    link={{ label: 'Ver todas las novedades', href: '/novedades' }}
+  />
+  <Editorial image={lookImage} />
+  <Categories products={products} />
+  <Benefits />
+  <Newsletter />
+</BaseLayout>

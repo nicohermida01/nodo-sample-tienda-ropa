@@ -1,0 +1,121 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Picture, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import Catalog from '../../components/product/Catalog.astro';
+import { site } from '../../config/site';
+import { getProductCollections, getProducts, type ProductCollection } from '../../lib/products';
+
+export const getStaticPaths = (async () => {
+  const collections = await getProductCollections();
+  return collections.map((collection) => ({
+    params: { slug: collection.data.slug },
+    props: { collection },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  collection: ProductCollection;
+}
+
+const { collection } = Astro.props;
+const products = (await getProducts()).filter((p) => p.data.collection.id === collection.id);
+const media = collection.data.hero ?? collection.data.cover;
+const wide = Boolean(collection.data.hero);
+const og = await getImage({ src: media.src, width: 1200, format: 'jpg' });
+---
+
+<BaseLayout
+  title={collection.data.name}
+  description={collection.data.description}
+  image={new URL(og.src, site.url).href}
+  imageAlt={media.alt}
+>
+  <section class:list={['collection-hero on-photo', wide ? 'is-wide' : 'is-tall']} aria-labelledby="collection-title">
+    <Picture
+      src={media.src}
+      alt={media.alt}
+      widths={[640, 960, 1280, 1920]}
+      sizes="100vw"
+      formats={['avif', 'webp']}
+      loading="eager"
+      fetchpriority="high"
+      class="collection-hero-img"
+    />
+    <div class="collection-hero-scrim" aria-hidden="true"></div>
+    <div class="collection-hero-text">
+      <h1 id="collection-title" class="collection-hero-title">{collection.data.name}</h1>
+      <p class="mt-4 max-w-[40ch]">{collection.data.tagline}</p>
+    </div>
+  </section>
+
+  <div class="shell flex flex-col items-center py-10 text-center lg:py-14">
+    <Breadcrumb
+      class="flex justify-center"
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Colecciones', href: '/colecciones' },
+        { label: collection.data.name, href: `/colecciones/${collection.data.slug}` },
+      ]}
+    />
+    <p class="mt-6 max-w-[60ch] text-[1.0625rem] leading-relaxed">{collection.data.description}</p>
+  </div>
+
+  <Catalog products={products} />
+</BaseLayout>
+
+<style>
+  .collection-hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: var(--color-on-ink);
+    text-align: center;
+    min-height: 26rem;
+    aspect-ratio: 4 / 5;
+    max-height: 80svh;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .collection-hero {
+      aspect-ratio: 21 / 9;
+      max-height: 70svh;
+    }
+  }
+
+  .collection-hero :global(.collection-hero-img) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .collection-hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--scrim);
+  }
+
+  .collection-hero-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem var(--gutter);
+  }
+
+  .collection-hero-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+</style>

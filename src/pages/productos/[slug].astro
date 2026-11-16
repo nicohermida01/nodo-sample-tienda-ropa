@@ -1,0 +1,466 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import Icon from '../../components/ui/Icon.astro';
+import Gallery from '../../components/product/Gallery.astro';
+import SizeTable from '../../components/product/SizeTable.astro';
+import ProductCard from '../../components/product/ProductCard.astro';
+import { site, formatPrice } from '../../config/site';
+import {
+  CATEGORY_LABELS,
+  discountPercent,
+  getProductCollections,
+  getProducts,
+  installmentsLabel,
+  isInStock,
+  netPrice,
+  productHref,
+  toCartPayload,
+  transferPrice,
+  type Product,
+} from '../../lib/products';
+
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  return products.map((product) => ({
+    params: { slug: product.data.slug },
+    props: { product },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const { data } = product;
+const all = await getProducts();
+const collections = await getProductCollections();
+const collection = collections.find((c) => c.id === data.collection.id);
+const related = all
+  .filter((p) => p.data.collection.id === data.collection.id && p.id !== product.id)
+  .slice(0, 4);
+
+const discount = discountPercent(product);
+const payload = await toCartPayload(product);
+const singleSize = data.sizes.length === 1 && data.sizes[0].inStock ? data.sizes[0].label : null;
+const available = isInStock(product);
+const { commerce } = site;
+
+const url = new URL(productHref(product), site.url).href;
+const ogImage = await getImage({ src: data.images[0].src, width: 1200, format: 'jpg' });
+const imageUrls = await Promise.all(
+  data.images.map(async (img) => new URL((await getImage({ src: img.src, width: 1200, format: 'jpg' })).src, site.url).href),
+);
+
+const crumbs = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Tienda', href: '/tienda' },
+  { label: CATEGORY_LABELS[data.category], href: `/tienda?categoria=${data.category}` },
+  { label: data.name, href: productHref(product) },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: data.name,
+    description: data.description,
+    sku: product.id,
+    image: imageUrls,
+    category: CATEGORY_LABELS[data.category],
+    brand: { '@type': 'Brand', name: site.brand.name },
+    color: data.colors.map((c) => c.name).join(', '),
+    material: data.composition.map((c) => `${c.percent}% ${c.material}`).join(', '),
+    offers: {
+      '@type': 'Offer',
+      url,
+      price: data.price,
+      priceCurrency: site.currency,
+      availability: available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: { '@type': 'Organization', name: site.brand.name },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.label,
+      item: new URL(c.href, site.url).href,
+    })),
+  },
+];
+
+const guarantees = [
+  { icon: 'truck' as const, title: 'Envío gratis', text: `Desde ${formatPrice(commerce.freeShippingThreshold)}` },
+  { icon: 'returns' as const, title: 'Cambios', text: `${commerce.returnWindowDays} días sin costo` },
+  { icon: 'shield' as const, title: 'Pago seguro', text: 'Tarjeta, débito o transferencia' },
+];
+---
+
+<BaseLayout
+  title={data.name}
+  description={data.description}
+  image={new URL(ogImage.src, site.url).href}
+  imageAlt={data.images[0].alt}
+  type="product"
+  jsonLd={jsonLd}
+>
+  <Fragment slot="head">
+    <meta property="product:price:amount" content={String(data.price)} />
+    <meta property="product:price:currency" content={site.currency} />
+    <meta property="product:availability" content={available ? 'in stock' : 'out of stock'} />
+  </Fragment>
+
+  <div class="pdp">
+    <div class="pdp-gallery">
+      <Gallery product={product} />
+    </div>
+
+    <div class="pdp-info">
+      <div class="pdp-sticky">
+        <Breadcrumb items={crumbs} />
+
+        <h1 class="mt-5 text-[1.625rem] leading-tight font-semibold tracking-[-0.02em] lg:text-[2rem]">
+          {data.name}
+        </h1>
+
+        <div class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p class:list={['text-[1.375rem] font-medium tabular-nums', discount && 'text-sale']}>
+            <span class="sr-only">{discount ? 'Precio de oferta: ' : 'Precio: '}</span>
+            {formatPrice(data.price)}
+          </p>
+          {
+            data.compareAtPrice && discount && (
+              <>
+                <s class="text-ink-muted tabular-nums">
+                  <span class="sr-only">Precio anterior: </span>
+                  {formatPrice(data.compareAtPrice)}
+                </s>
+                <span class="badge badge-sale border border-line">-{discount}%</span>
+              </>
+            )
+          }
+        </div>
+        <p class="mt-1 text-[0.75rem] text-ink-muted">
+          Precio sin impuestos nacionales: {formatPrice(netPrice(data.price))}
+        </p>
+        <ul class="mt-4 space-y-1 text-[0.875rem]">
+          <li class="flex items-center gap-2">
+            <Icon name="card" size={18} />
+            {installmentsLabel(data.price)}
+          </li>
+          <li class="flex items-center gap-2">
+            <Icon name="check" size={18} />
+            <span>
+              <strong class="font-semibold">{formatPrice(transferPrice(data.price))}</strong> pagando por transferencia
+              ({Math.round(commerce.transferDiscount * 100)}% off)
+            </span>
+          </li>
+        </ul>
+
+        <form
+          id="pdp-form"
+          class="mt-8"
+          data-add-to-cart
+          data-product={JSON.stringify(payload)}
+        >
+          <fieldset>
+            <legend class="label">
+              Color: <span class="font-normal normal-case tracking-normal text-[0.8125rem]" data-selected-color>
+                {data.colors[0].name}
+              </span>
+            </legend>
+            <div class="mt-2 -ml-1.5 flex flex-wrap gap-1">
+              {
+                data.colors.map((c, i) => (
+                  <label class="swatch-option" title={c.name}>
+                    <input type="radio" name="color" value={c.name} checked={i === 0} />
+                    <span style={`--swatch:${c.hex}`} aria-hidden="true" />
+                    <span class="sr-only">{c.name}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="relative mt-6">
+            <legend class="label">Talle</legend>
+              {
+                !singleSize && (
+                  <button
+                    type="button"
+                    class="absolute -top-[1.95rem] right-0 inline-flex min-h-11 items-center gap-1.5 text-[0.8125rem]"
+                    data-open-dialog="size-guide"
+                    aria-haspopup="dialog"
+                  >
+                    <Icon name="ruler" size={18} />
+                    <span class="link">Guía de talles</span>
+                  </button>
+                )
+              }
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {
+                data.sizes.map((s) => (
+                  <label class="size-option">
+                    <input
+                      type="radio"
+                      name="size"
+                      value={s.label}
+                      disabled={!s.inStock}
+                      checked={singleSize === s.label}
+                      aria-describedby={s.inStock ? undefined : 'pdp-soldout'}
+                    />
+                    <span>{s.label === 'U' ? 'Talle único' : s.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <span id="pdp-soldout" class="sr-only">{site.copy.soldOut}</span>
+            {
+              data.sizes.some((s) => !s.inStock) && (
+                <p class="mt-2 text-[0.75rem] text-ink-muted">
+                  Los talles tachados están sin stock. Los reponemos en la próxima tirada.
+                </p>
+              )
+            }
+          </fieldset>
+
+          <div class="pdp-cta mt-6">
+            <button
+              type="submit"
+              class="btn btn-primary w-full"
+              data-submit
+              disabled={!singleSize}
+              aria-describedby="pdp-hint"
+            >
+              <Icon name="bag" size={18} />
+              {site.copy.addToCart}
+            </button>
+            <p id="pdp-hint" class="mt-2 text-[0.8125rem] text-ink-muted" data-size-hint hidden={Boolean(singleSize)}>
+              {site.copy.selectSize} para agregarlo al carrito.
+            </p>
+          </div>
+        </form>
+
+        <ul class="mt-6 grid grid-cols-3 gap-2 border-y border-line py-4">
+          {
+            guarantees.map((g) => (
+              <li class="flex flex-col items-center gap-1.5 text-center">
+                <Icon name={g.icon} size={20} />
+                <span class="text-[0.75rem] font-semibold">{g.title}</span>
+                <span class="text-[0.6875rem] leading-snug text-ink-muted">{g.text}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-2">
+          <details class="acc" open>
+            <summary>Descripción <Icon name="plus" size={18} /></summary>
+            <div class="acc-body">
+              <p>{data.description}</p>
+              {collection && (
+                <p class="mt-3 text-ink-muted">
+                  Parte de la colección <a class="link text-ink" href={`/colecciones/${collection.data.slug}`}>{collection.data.name}</a>.
+                </p>
+              )}
+            </div>
+          </details>
+          <details class="acc">
+            <summary>Composición y cuidados <Icon name="plus" size={18} /></summary>
+            <div class="acc-body">
+              <p class="label text-ink-muted">Composición</p>
+              <ul class="mt-2">
+                {data.composition.map((c) => <li>{c.percent}% {c.material}</li>)}
+              </ul>
+              <p class="label mt-5 text-ink-muted">Cuidados</p>
+              <ul class="mt-2 list-disc pl-5">
+                {data.care.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+          </details>
+          <details class="acc">
+            <summary>Envíos y cambios <Icon name="plus" size={18} /></summary>
+            <div class="acc-body">
+              <p>
+                Envío gratis a todo el país en compras desde {formatPrice(commerce.freeShippingThreshold)}.
+                Despachamos en 24 a 48 horas hábiles.
+              </p>
+              <p class="mt-3">
+                Tenés {commerce.returnWindowDays} días para cambiar o devolver la prenda sin uso y con etiqueta.
+                El primer cambio no tiene costo.
+              </p>
+              <p class="mt-3">
+                <a href="/envios" class="link">Más sobre envíos</a> ·
+                <a href="/cambios-y-devoluciones" class="link">Cambios y devoluciones</a>
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: add to cart pinned to the bottom. -->
+  <div class="mobile-bar" data-sticky-cta>
+    <div class="min-w-0">
+      <p class="truncate text-[0.8125rem]">{data.name}</p>
+      <p class:list={['text-[0.9375rem] font-semibold tabular-nums', discount && 'text-sale']}>
+        {formatPrice(data.price)}
+      </p>
+    </div>
+    <button type="submit" form="pdp-form" class="btn btn-primary shrink-0" data-submit disabled={!singleSize}>
+      {site.copy.addToCart}
+    </button>
+  </div>
+
+  {
+    related.length > 0 && (
+      <section class="bleed py-16 lg:py-24" aria-labelledby="look-title">
+        <h2 id="look-title" class="section-title">Completá el look</h2>
+        <ul class="mt-8 grid grid-cols-2 gap-x-2 gap-y-8 lg:mt-10 lg:grid-cols-4 lg:gap-x-3">
+          {related.map((p, i) => (
+            <li>
+              <ProductCard product={p} index={i} sizes="(min-width: 1024px) 25vw, 50vw" />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <dialog
+    id="size-guide"
+    class="overlay size-dialog"
+    aria-labelledby="size-guide-title"
+    data-page-dialog
+    data-light-dismiss
+  >
+    <div class="p-6 lg:p-8">
+      <div class="flex items-start justify-between gap-4">
+        <h2 id="size-guide-title" class="text-[1.25rem] font-semibold tracking-[-0.01em]">Guía de talles</h2>
+        <button type="button" class="-mt-2 -mr-3 grid h-11 w-11 place-items-center" data-close-dialog>
+          <Icon name="x" size={22} />
+          <span class="sr-only">Cerrar guía de talles</span>
+        </button>
+      </div>
+      <p class="mt-2 text-[0.875rem] text-ink-muted">
+        Medí tu cuerpo, no la prenda, y compará con la tabla.
+      </p>
+      <div class="mt-6">
+        <SizeTable />
+      </div>
+      <a href="/guia-de-talles" class="mt-6 inline-flex min-h-11 items-center text-[0.8125rem]">
+        <span class="link">Cómo tomar tus medidas</span>
+      </a>
+    </div>
+  </dialog>
+</BaseLayout>
+
+<style>
+  .pdp {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .pdp-info {
+    padding-inline: var(--gutter);
+  }
+
+  @media (min-width: 1024px) {
+    .pdp {
+      grid-template-columns: minmax(0, 1fr) 26rem;
+      gap: 3rem;
+      padding: 0.75rem 0.75rem 0;
+    }
+    .pdp-info {
+      padding-inline: 0 var(--gutter);
+    }
+    .pdp-sticky {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      padding-top: 1rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .pdp {
+      grid-template-columns: minmax(0, 1fr) 28rem;
+      gap: 4rem;
+    }
+  }
+
+  @media (max-width: 1023.98px) {
+    .pdp-cta {
+      display: none;
+    }
+    .pdp {
+      padding-bottom: 1rem;
+    }
+  }
+
+  .mobile-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem var(--gutter) calc(0.625rem + env(safe-area-inset-bottom));
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-bar {
+      display: none;
+    }
+  }
+
+  .acc {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .acc summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .acc summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .acc summary :global(svg) {
+    transition: transform 300ms var(--ease-out-expo);
+  }
+
+  .acc[open] summary :global(svg) {
+    transform: rotate(45deg);
+  }
+
+  .acc-body {
+    padding-bottom: 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .size-dialog {
+    width: min(40rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    overflow-y: auto;
+  }
+</style>

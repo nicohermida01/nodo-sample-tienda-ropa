@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/ui/PageIntro.astro';
+import Catalog from '../components/product/Catalog.astro';
+import { getProducts, sortProducts } from '../lib/products';
+
+const products = sortProducts(
+  (await getProducts()).filter((p) => p.data.isNew),
+  'nuevos',
+);
+---
+
+<BaseLayout
+  title="Novedades"
+  description="Lo último que entró al estudio: prendas nuevas de TRAMA Estudio."
+>
+  <PageIntro
+    title="Novedades"
+    lead="Lo último que salió del taller. Tiradas cortas: cuando un talle se agota, lo reponemos en la próxima producción."
+    breadcrumb={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Novedades', href: '/novedades' },
+    ]}
+  />
+  <Catalog products={products} />
+</BaseLayout>
