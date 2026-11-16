@@ -1,0 +1,68 @@
+---
+import { site } from '../../config/site';
+
+interface Props {
+  caption?: string;
+}
+const { caption = 'Medidas de referencia (cm)' } = Astro.props;
+const { columns, rows, note } = site.sizeGuide;
+---
+
+<div class="overflow-x-auto">
+  <table class="size-table">
+    <caption>{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Talle</th>
+        {columns.map((c) => <th scope="col">{c}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr>
+            <th scope="row">{r.size}</th>
+            {r.values.map((v) => <td>{v}</td>)}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+<p class="mt-3 text-[0.8125rem] text-ink-muted">{note}</p>
+
+<style>
+  .size-table {
+    width: 100%;
+    min-width: 28rem;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  caption {
+    text-align: left;
+    padding-bottom: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  th,
+  td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+    text-align: left;
+  }
+
+  thead th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-bottom-color: var(--color-ink);
+  }
+
+  tbody th {
+    font-weight: 600;
+  }
+</style>

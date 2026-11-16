@@ -1,0 +1,151 @@
+---
+import { Picture } from 'astro:assets';
+import { photoTransitionName, type Product } from '../../lib/products';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const images = product.data.images;
+// Two 4:5 columns beside a 26rem (lg) / 28rem (xl) info panel; full width on mobile.
+const SIZES = '(min-width: 1280px) calc(50vw - 270px), (min-width: 1024px) calc(50vw - 245px), 100vw';
+// An odd last photo spans both desktop columns (still 4:5) instead of leaving an empty cell.
+const SIZES_WIDE = '(min-width: 1280px) calc(100vw - 540px), (min-width: 1024px) calc(100vw - 490px), 100vw';
+const isWide = (i: number) => images.length % 2 === 1 && i === images.length - 1;
+---
+
+<div class="gallery" data-gallery>
+  <ul class="gallery-track no-scrollbar" data-gallery-track aria-label={`Fotos de ${product.data.name}`}>
+    {
+      images.map((img, i) => (
+        <li class:list={['gallery-item', isWide(i) && 'is-wide']}>
+          {i === 0 ? (
+            <div class="h-full" transition:name={photoTransitionName(product)}>
+              <Picture
+                src={img.src}
+                alt={img.alt}
+                widths={[480, 720, 960, 1200]}
+                sizes={SIZES}
+                formats={['avif', 'webp']}
+                loading="eager"
+                fetchpriority="high"
+                class="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <Picture
+              src={img.src}
+              alt={img.alt}
+              widths={[480, 720, 960, 1200]}
+              sizes={isWide(i) ? SIZES_WIDE : SIZES}
+              formats={['avif', 'webp']}
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          )}
+        </li>
+      ))
+    }
+  </ul>
+  <div class="gallery-indicator" aria-hidden="true">
+    <span class="tabular-nums" data-gallery-pos>1 / {images.length}</span>
+    <span class="gallery-dots">
+      {images.map((_, i) => <span data-gallery-dot class:list={[i === 0 && 'is-active']} />)}
+    </span>
+  </div>
+</div>
+
+<script>
+  import { onPage } from '../../lib/client/lifecycle';
+
+  onPage(() => {
+    const gallery = document.querySelector<HTMLElement>('[data-gallery]');
+    if (!gallery) return;
+    const track = gallery.querySelector<HTMLElement>('[data-gallery-track]')!;
+    const pos = gallery.querySelector<HTMLElement>('[data-gallery-pos]')!;
+    const dots = [...gallery.querySelectorAll<HTMLElement>('[data-gallery-dot]')];
+    const total = dots.length;
+    const update = () => {
+      const index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      const current = Math.min(total - 1, Math.max(0, index));
+      pos.textContent = `${current + 1} / ${total}`;
+      dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
+    };
+    track.addEventListener('scroll', update, { passive: true });
+    return () => track.removeEventListener('scroll', update);
+  });
+</script>
+
+<style>
+  .gallery {
+    position: relative;
+  }
+
+  .gallery-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+  }
+
+  .gallery-item {
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .gallery .gallery-indicator {
+      display: none;
+    }
+    .gallery-track {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-columns: auto;
+      gap: 0.5rem;
+      overflow: visible;
+    }
+    .gallery-item.is-wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .gallery-indicator {
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  .gallery-indicator > span:first-child {
+    padding: 0.25rem 0.5rem;
+    background: var(--color-bg);
+  }
+
+  .gallery-dots {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .gallery-dots span {
+    width: 1.25rem;
+    height: 2px;
+    background: color-mix(in srgb, var(--color-ink) 25%, transparent);
+    transition: background-color 300ms var(--ease-out-expo);
+  }
+
+  .gallery-dots :global(span.is-active) {
+    background: var(--color-ink);
+  }
+</style>

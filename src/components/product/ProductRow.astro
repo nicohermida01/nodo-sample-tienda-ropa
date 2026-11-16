@@ -1,0 +1,198 @@
+---
+import ProductCard from './ProductCard.astro';
+import Icon from '../ui/Icon.astro';
+import type { Product } from '../../lib/products';
+
+interface Props {
+  id: string;
+  title: string;
+  products: Product[];
+  link?: { label: string; href: string };
+}
+
+const { id, title, products, link } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<section class="py-16 lg:py-24" aria-labelledby={titleId} data-row>
+  <h2 id={titleId} class="section-title">{title}</h2>
+
+  <div class="relative mt-8 lg:mt-10">
+    <ul class="row-track no-scrollbar bleed" data-row-track tabindex="0" aria-label={title}>
+      {
+        products.map((product, i) => (
+          <li class="row-item">
+            <ProductCard product={product} index={i} sizes="(min-width: 1024px) 25vw, 46vw" />
+          </li>
+        ))
+      }
+    </ul>
+    <button type="button" class="row-arrow row-prev" data-row-prev aria-controls={id} hidden>
+      <Icon name="chevron-left" size={20} />
+      <span class="sr-only">Ver anteriores</span>
+    </button>
+    <button type="button" class="row-arrow row-next" data-row-next aria-controls={id} hidden>
+      <Icon name="chevron-right" size={20} />
+      <span class="sr-only">Ver siguientes</span>
+    </button>
+  </div>
+
+  <div class="shell mt-8 flex flex-col items-center gap-8">
+    <div class="row-progress" aria-hidden="true" data-row-progress-wrap>
+      <span data-row-progress></span>
+    </div>
+    {
+      link && (
+        <a href={link.href} class="inline-flex min-h-11 items-center gap-2 text-[0.8125rem] font-medium">
+          <span class="link">{link.label}</span>
+          <Icon name="arrow-right" size={16} />
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  import { onPage, prefersReducedMotion } from '../../lib/client/lifecycle';
+
+  onPage(() => {
+    const cleanups: (() => void)[] = [];
+    document.querySelectorAll<HTMLElement>('[data-row]').forEach((row) => {
+      const track = row.querySelector<HTMLElement>('[data-row-track]')!;
+      const prev = row.querySelector<HTMLButtonElement>('[data-row-prev]')!;
+      const next = row.querySelector<HTMLButtonElement>('[data-row-next]')!;
+      const bar = row.querySelector<HTMLElement>('[data-row-progress]')!;
+      const wrap = row.querySelector<HTMLElement>('[data-row-progress-wrap]')!;
+      track.id ||= prev.getAttribute('aria-controls') ?? '';
+
+      const update = () => {
+        const max = track.scrollWidth - track.clientWidth;
+        const scrollable = max > 4;
+        wrap.hidden = !scrollable;
+        prev.hidden = next.hidden = !scrollable;
+        if (!scrollable) return;
+        const ratio = track.clientWidth / track.scrollWidth;
+        const progress = track.scrollLeft / max;
+        bar.style.width = `${ratio * 100}%`;
+        bar.style.transform = `translateX(${(progress * (1 - ratio) * 100) / ratio}%)`;
+        prev.disabled = track.scrollLeft <= 4;
+        next.disabled = track.scrollLeft >= max - 4;
+      };
+      const page = (dir: number) =>
+        track.scrollBy({
+          left: dir * track.clientWidth * 0.9,
+          behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        });
+      const onPrev = () => page(-1);
+      const onNext = () => page(1);
+      const ro = new ResizeObserver(update);
+      ro.observe(track);
+      track.addEventListener('scroll', update, { passive: true });
+      prev.addEventListener('click', onPrev);
+      next.addEventListener('click', onNext);
+      update();
+      cleanups.push(() => {
+        ro.disconnect();
+        track.removeEventListener('scroll', update);
+        prev.removeEventListener('click', onPrev);
+        next.removeEventListener('click', onNext);
+      });
+    });
+    return () => cleanups.forEach((fn) => fn());
+  });
+</script>
+
+<style>
+  .row-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 46%;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0.5rem;
+  }
+
+  .row-track:focus-visible {
+    outline-offset: -2px;
+  }
+
+  @media (min-width: 768px) {
+    .row-track {
+      grid-auto-columns: 31%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .row-track {
+      grid-auto-columns: calc((100% - 1.5rem - 3 * 0.75rem) / 4);
+      gap: 0.75rem;
+      scroll-padding-inline: 0.75rem;
+    }
+  }
+
+  /* Reveal is tied to page scroll; inside a horizontal scroller it would bind to the track. */
+  .row-item :global(.reveal) {
+    animation: none;
+  }
+
+  .row-item {
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  .row-arrow {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .row-arrow:not([hidden]) {
+      position: absolute;
+      z-index: 3;
+      /* Vertically centered on the 4:5 photos. */
+      top: calc(((100vw - 1.5rem - 2.25rem) / 4) * 1.25 / 2 - 1.5rem);
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 999px;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      border: 1px solid var(--color-line);
+      cursor: pointer;
+      transition:
+        background-color 200ms var(--ease-out-expo),
+        color 200ms var(--ease-out-expo),
+        opacity 200ms var(--ease-out-expo);
+    }
+    .row-arrow:disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .row-arrow:not(:disabled):hover {
+      background: var(--color-ink);
+      color: var(--color-on-ink);
+    }
+    .row-prev {
+      left: 1.5rem;
+    }
+    .row-next {
+      right: 1.5rem;
+    }
+  }
+
+  .row-progress {
+    width: min(20rem, 60%);
+    height: 2px;
+    background: var(--color-line);
+    overflow: hidden;
+  }
+
+  .row-progress span {
+    display: block;
+    height: 100%;
+    width: 50%;
+    background: var(--color-ink);
+  }
+</style>
