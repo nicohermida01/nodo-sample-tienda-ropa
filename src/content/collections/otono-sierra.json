@@ -7,15 +7,15 @@
   "description": "Una colección pensada entre las sierras y la ciudad: lanas, linos y paños en tonos de piedra, musgo y terracota, con cortes amplios que se superponen sin esfuerzo.",
   "cover": {
     "src": "../../assets/campaign/otono-sierra-cover.jpg",
-    "alt": "Foto de ejemplo: portada de la colección Otoño Sierra."
+    "alt": "Sweater de lana gris, camisa de lino verde musgo y bufanda terracota sobre una superficie de lino crudo."
   },
   "hero": {
     "src": "../../assets/campaign/otono-sierra-hero.jpg",
-    "alt": "Foto de ejemplo: campaña Otoño Sierra a pantalla completa."
+    "alt": "Modelo con sobretodo negro y sweater verde musgo, de pie entre pastos secos frente a las sierras al atardecer."
   },
   "coverLine": "Lana, lino y paño en tonos de piedra y musgo.",
   "heroMobile": {
     "src": "../../assets/campaign/otono-sierra-hero-mobile.jpg",
-    "alt": "Foto de ejemplo: campaña Otoño Sierra en formato vertical."
+    "alt": "Modelo con sobretodo negro y sweater verde musgo, de pie entre pastos secos frente a las sierras al atardecer."
   }
 }
