@@ -7,7 +7,9 @@ rebrandear: marca, copy y productos están centralizados.
 
 ## Stack
 
-- **Astro 7** (`output: "static"`), TypeScript strict (`astro/tsconfigs/strict`). Node ≥ 22.23.4.
+- **Astro 7** (`output: "static"`), TypeScript strict (`astro/tsconfigs/strict`). Node 24
+  (`engines.node: "24.x"`, fijado para que Vercel no use otro major).
+- Deploy en **Vercel** (https://nodo-sample-tienda-ropa.vercel.app), sin `vercel.json`.
 - **Tailwind CSS v4** vía `@tailwindcss/vite`; tokens en el bloque `@theme` de `src/styles/global.css`.
 - **@astrojs/sitemap**; `site` sale de `site.url` en `src/config/site.ts`.
 - **Content Collections** con loader `glob` + esquemas **Zod 4** (`import { z } from 'astro/zod'`).
@@ -33,13 +35,17 @@ rebrandear: marca, copy y productos están centralizados.
   (`demoNotice.enabled` lo saca para un cliente real). Los textos de anuncios se **derivan** de
   `commerce`; nunca repitas montos a mano. `formatPrice()` formatea ARS (`es-AR`).
 - `src/content.config.ts`: esquemas de `products` y `collections` (+ `CATEGORIES`, `SIZES`, `IMAGE_VIEWS`).
-- `src/content/products/*.json`: un archivo por producto; el `id` de la entrada es el `slug`.
+- `src/content/products/*.json`: un archivo por producto; el `id` de la entrada es el nombre del
+  archivo y tiene que coincidir con `slug` (`src/lib/products.ts` rompe el build si no).
   Reglas que valida el esquema: `compareAtPrice > price`, composición que suma 100, talles únicos,
   2-4 imágenes con `alt`, colección existente (`reference('collections')`).
 - `src/content/collections/*.json`: colecciones (`status`: `current` | `permanent` | `archived`).
-- `src/assets/products/<slug>/<vista>.jpg`: fotos de producto (placeholders 1200×1500, 4:5).
-  `src/assets/campaign/`: portadas 4:5 y hero 16:9. Para reemplazar fotos, pisá el archivo o
-  cambiá la ruta en el JSON.
+- `src/assets/products/<slug>/<vista>.jpg`: fotos de producto 1200×1500 (4:5). Hoy conviven fotos
+  generadas con IA y placeholders marcados. `src/assets/campaign/`: portadas 4:5, hero 16:9 y hero
+  mobile 4:5 (`heroMobile` en la colección). Para reemplazar fotos, pisá el archivo o cambiá la
+  ruta en el JSON. Cada raster lleva su origen embebido (`impeccable embed-prompt`).
+- `DESIGN.md` + `.impeccable/design.json`: sistema visual tal como quedó construido. `PRODUCT.md`:
+  contexto de producto. `.impeccable/surfaces/`: contrato de dirección de la tienda.
 - `src/stores/cart.ts`: `$cartItems` (persistido en `localStorage` bajo `trama:cart:v1`, con motor
   seguro que cae a memoria si el storage falla), `$cartCount`, `$cartSubtotal`,
   `$freeShippingRemaining`, `$isCartOpen`, `$lastAdded`, y las acciones `addItem`, `removeItem`,
@@ -84,7 +90,7 @@ un producto terminado y listo para cargar su catálogo.
 Lo que más tiene que destacar son las fotos de producto y de campaña, el nombre y precio de cada
 prenda, y el botón "Agregar al carrito".
 
-Páginas previstas (no las crees todavía):
+Páginas (todas construidas):
 
 - **Home**: barra de anuncios (envío gratis / cuotas) → header con logo, navegación, búsqueda y
   carrito con contador → hero de campaña a pantalla completa (imagen o video corto) → colecciones
@@ -132,8 +138,8 @@ contenedor de 1280-1440px y la grilla de producto puede usar todo el ancho con m
   - `--color-ink` `#111111` (texto, botones primarios, barra de anuncios, estado activo)
   - `--color-ink-muted` `#6B6B6B` (texto secundario, precio tachado; 5.3:1 sobre blanco)
   - `--color-line` `#E6E6E3` (divisores y bordes de 1px)
-  - `--color-accent` `#9C4B2F` (terracota de sierra; 6:1 sobre blanco) solo para ofertas y algún
-    badge puntual. Las referencias casi no usan color de acento: el estado activo es **negro relleno**.
+  - `--color-accent` `#9C4B2F` (terracota de sierra; 6:1 sobre blanco) solo para ofertas, algún
+    badge puntual y mensajes de error de formulario. Las referencias casi no usan color de acento: el estado activo es **negro relleno**.
   - `--color-sale` (por defecto igual a `--color-accent`)
   - `--color-on-ink` `#FFFFFF`
   - Nunca colores hardcodeados en componentes.
@@ -151,7 +157,8 @@ contenedor de 1280-1440px y la grilla de producto puede usar todo el ancho con m
 - **Espaciado**: escala de 4/8px; gutters de 8-12px en la grilla de productos y mucho aire
   (80-160px verticales) en los bloques editoriales.
 - **Fotografía**: producto sobre fondo de estudio liso gris muy claro, encuadre centrado, 4:5.
-  Campaña full-bleed (≈ 21:9 desktop, 4:5 mobile vía `<Picture />`) con texto centrado encima.
+  Campaña full-bleed (16:9 desktop, 4:5 mobile vía `<picture>` con fuentes por breakpoint) con
+  texto centrado encima.
   Placeholders con la proporción correcta, neutros y claramente marcados ("FOTO: PRODUCTO FRENTE /
   ESPALDA / DETALLE / LOOK"), intercambiables desde las collections. Nunca fotos de stock ni de marcas reales.
 - **Iconografía**: un solo set lineal (Lucide vía astro-icon o SVG inline), stroke 1.5 uniforme,
