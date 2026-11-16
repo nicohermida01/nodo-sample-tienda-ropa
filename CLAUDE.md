@@ -9,7 +9,7 @@ rebrandear: marca, copy y productos están centralizados.
 
 - **Astro 7** (`output: "static"`), TypeScript strict (`astro/tsconfigs/strict`). Node 24
   (`engines.node: "24.x"`, fijado para que Vercel no use otro major).
-- Deploy en **Vercel** (https://nodo-sample-tienda-ropa.vercel.app), sin `vercel.json`.
+- Deploy en **Vercel** (https://nodo-sample-tienda-ropa-8z3g.vercel.app), sin `vercel.json`.
 - **Tailwind CSS v4** vía `@tailwindcss/vite`; tokens en el bloque `@theme` de `src/styles/global.css`.
 - **@astrojs/sitemap**; `site` sale de `site.url` en `src/config/site.ts`.
 - **Content Collections** con loader `glob` + esquemas **Zod 4** (`import { z } from 'astro/zod'`).

@@ -2,7 +2,7 @@
 
 Tienda estática de una marca de ropa **ficticia** (TRAMA Estudio, Córdoba, Argentina), construida por Estudio Nodo como sitio de muestra y template para marcas de indumentaria independientes. La marca, el copy y el catálogo están centralizados: rebrandear es cambiar datos, no reescribir componentes.
 
-**Demo:** https://nodo-sample-tienda-ropa.vercel.app
+**Demo:** https://nodo-sample-tienda-ropa-8z3g.vercel.app
 
 > La marca, los productos y los precios son ficticios. El checkout es de demostración: no pide datos de pago ni procesa compras.
 

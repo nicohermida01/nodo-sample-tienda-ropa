@@ -94,7 +94,7 @@ export const formatPrice = (amount: number): string =>
   }).format(amount);
 
 export const site: SiteConfig = {
-  url: 'https://nodo-sample-tienda-ropa.vercel.app',
+  url: 'https://nodo-sample-tienda-ropa-8z3g.vercel.app',
   locale: 'es-AR',
   lang: 'es',
   currency: 'ARS',
